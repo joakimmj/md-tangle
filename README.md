@@ -16,6 +16,13 @@ Markdown is a plaintext-ish format popular with programmers. It's simple, easy a
 already has support for embedding code blocks using ``` or ~~~~, mostly 
 for the purposes of syntax highlighting in documentation.
 
+## Command
+By adding the command `tangle:<path/filename>`, this tool will tangle tagged code
+blocks to given file. Supports `~` for home directory.
+
+If the file already exists, the user will be prompted with the option to overwrite,
+unless the `-f`/`--force` flag is added.
+
 ## Usage
 
 Take the following example:

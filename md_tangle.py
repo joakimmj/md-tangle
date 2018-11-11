@@ -63,6 +63,7 @@ def map_md_to_code_blocks(filename: str) -> Dict[str, str]:
 
 def save_to_file(code_blocks: Dict[str, str], verbose: bool = False, force: bool = False):
     for key, value in code_blocks.items():
+        key = os.path.expanduser(key)
         dir_name = os.path.dirname(key)
         if dir_name is not "":
             os.makedirs(dir_name, exist_ok=True)
