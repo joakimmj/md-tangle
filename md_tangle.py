@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+import os
 import re
 import argparse
 from typing import Optional, Dict
@@ -62,11 +62,16 @@ def map_md_to_code_blocks(filename: str) -> Dict[str, str]:
 
 def save_to_file(code_blocks: Dict[str, str], verbose: bool):
     for key, value in code_blocks.items():
+        dir_name = os.path.dirname(key)
+        if dir_name is not "":
+            os.makedirs(dir_name, exist_ok=True)
+
+        with open(key, "w") as f:
+            f.write(value)
+            f.close()
+
         if verbose:
             print(f"{key:50} {len(value.splitlines())} lines")
-        new_file = open(key, 'w')
-        new_file.write(value)
-        new_file.close()
 
 
 if __name__ == "__main__":

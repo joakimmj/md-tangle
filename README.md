@@ -44,9 +44,9 @@ By adding `md-tangle.py` to `$PATH`, one could simply produce files from this fi
 executing:
 
 ```bash
-$ md_tangle --verbose HelloWorld.md
-helloWorld.js                                      1 lines
-styles/button.css                                  3 lines
+$ md_tangle --verbose HelloWorld.md 
+helloWorld.js                                      2 lines
+styles/button.css                                  4 lines
 ```
 
 --OR--
@@ -54,7 +54,7 @@ styles/button.css                                  3 lines
 ```bash
 $ md_tangle HelloWorld.md
 $ ls 
-helloWorld.js HelloWorld.md styles/
+helloWorld.js HelloWorld.md styles
 ```
 
 [1]: https://en.wikipedia.org/wiki/Org-mode
