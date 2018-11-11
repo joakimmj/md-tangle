@@ -13,7 +13,8 @@ block_regex_start = "^(~{4}|`{3})"
 def get_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Tangle code blocks from Markdown file.")
     parser.add_argument("filename", type=str, help="path to Markdown file")
-    parser.add_argument("--verbose", action='store_true', help="show output")
+    parser.add_argument("-v", "--verbose", action='store_true', help="show output")
+    parser.add_argument("-f", "--force", action='store_true', help="force overwrite of files")
     return parser.parse_args()
 
 
@@ -60,11 +61,16 @@ def map_md_to_code_blocks(filename: str) -> Dict[str, str]:
     return code_blocks
 
 
-def save_to_file(code_blocks: Dict[str, str], verbose: bool):
+def save_to_file(code_blocks: Dict[str, str], verbose: bool = False, force: bool = False):
     for key, value in code_blocks.items():
         dir_name = os.path.dirname(key)
         if dir_name is not "":
             os.makedirs(dir_name, exist_ok=True)
+
+        if os.path.isfile(key) and not force:
+            overwrite = input(f"'{key}' already exists. Overwrite? (Y/n) ")
+            if overwrite != "" and overwrite.lower() != "y":
+                continue
 
         with open(key, "w") as f:
             f.write(value)
@@ -77,4 +83,4 @@ def save_to_file(code_blocks: Dict[str, str], verbose: bool):
 if __name__ == "__main__":
     args = get_args()
     blocks = map_md_to_code_blocks(args.filename)
-    save_to_file(blocks, args.verbose)
+    save_to_file(blocks, args.verbose, args.force)

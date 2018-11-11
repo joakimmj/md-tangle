@@ -44,7 +44,7 @@ By adding `md-tangle.py` to `$PATH`, one could simply produce files from this fi
 executing:
 
 ```bash
-$ md_tangle --verbose HelloWorld.md 
+$ md_tangle -v HelloWorld.md 
 helloWorld.js                                      2 lines
 styles/button.css                                  4 lines
 ```
