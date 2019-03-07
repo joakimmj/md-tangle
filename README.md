@@ -81,4 +81,4 @@ code.
 [5]: https://en.wikipedia.org/wiki/Markup_language
 [6]: https://en.wikipedia.org/wiki/Literate_programming
 [7]: https://en.wikipedia.org/wiki/Markdown
-[8]: md-tangle.md
+[8]: DOCS.md
