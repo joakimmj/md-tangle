@@ -2,19 +2,27 @@
 
 This is the documentation, and source code, for `md-tangle`.
 
+Since this script does not support tangling code to multiple files (yet), we need to
+have some duplicated code blocks.
+
+`md-tangle` is the original script, and written in Python 3. Since some still swear to
+Python 2, I have also added the source code for `md-tangle2`.
+
+This documentation needs some love, and this will be fixed in a later commit.
+
 ## Shebang line
-__Python3__
+__md-tangle__
 ```python tangle:src/py3/md-tangle
 #!/usr/bin/env python3
 ```
 
-__Python2__
+__md-tangle2__
 ```python tangle:src/py2/md-tangle2
 #!/usr/bin/env python
 ```
 
 ## Imports
-__Python3__
+__md-tangle__
 ```python tangle:src/py3/md-tangle
 import os
 import re
@@ -22,7 +30,7 @@ import argparse
 from typing import Optional, Dict
 ```
 
-__Python2__
+__md-tangle2__
 ```python tangle:src/py2/md-tangle2
 import os
 import re
@@ -36,6 +44,7 @@ except ImportError:
 
 ## Regex to fetch the keywords
 
+__md-tangle__
 ```python tangle:src/py3/md-tangle
 tangle_cmd = "tangle:"
 tangle_regex = "tangle:+([^\s]+)"
@@ -43,9 +52,7 @@ block_regex = "~{4}|`{3}"
 block_regex_start = "^(~{4}|`{3})"
 ```
 
-Since this script does not support tangling code to multiple files (yet), we need to
-add code that is equal in both twice.
-
+__md-tangle2__
 ```python tangle:src/py2/md-tangle2
 tangle_cmd = "tangle:"
 tangle_regex = "tangle:+([^\s]+)"
@@ -55,6 +62,7 @@ block_regex_start = "^(~{4}|`{3})"
 
 ## Argument parsing
 
+__md-tangle__
 ```python tangle:src/py3/md-tangle
 
 def get_args() -> argparse.Namespace:
@@ -65,6 +73,7 @@ def get_args() -> argparse.Namespace:
     return parser.parse_args()
 ```
 
+__md-tangle2__
 ```python tangle:src/py2/md-tangle2
 
 def get_args():
@@ -77,6 +86,7 @@ def get_args():
 
 ## Check if line contains code block separators
 
+__md-tangle__
 ```python tangle:src/py3/md-tangle
 
 def contains_code_block_separators(line: str) -> bool:
@@ -90,6 +100,7 @@ def contains_code_block_separators(line: str) -> bool:
     return starts_with_separator and only_one_separator
 ```
 
+__md-tangle2__
 ```python tangle:src/py2/md-tangle2
 
 def contains_code_block_separators(line):
@@ -105,6 +116,7 @@ def contains_code_block_separators(line):
 
 ## Get save location from keyword
 
+__md-tangle__
 ```python tangle:src/py3/md-tangle
 
 def get_save_location(line: str) -> Optional[str]:
@@ -117,6 +129,7 @@ def get_save_location(line: str) -> Optional[str]:
     return match.replace(tangle_cmd, '')
 ```
 
+__md-tangle2__
 ```python tangle:src/py2/md-tangle2
 
 def get_save_location(line):
@@ -129,7 +142,8 @@ def get_save_location(line):
     return match.replace(tangle_cmd, '')
 ```
 
-## Map Markdown to code blocks
+## Map Markdown t
+__md-tangle__o code blocks
 ```python tangle:src/py3/md-tangle
 
 def map_md_to_code_blocks(filename: str) -> Dict[str, str]:
@@ -154,6 +168,7 @@ def map_md_to_code_blocks(filename: str) -> Dict[str, str]:
     return code_blocks
 ```
 
+__md-tangle2__
 ```python tangle:src/py2/md-tangle2
 
 def map_md_to_code_blocks(filename):
@@ -179,6 +194,7 @@ def map_md_to_code_blocks(filename):
 ```
 
 ## Save to file
+__md-tangle__
 ```python tangle:src/py3/md-tangle
 
 def save_to_file(code_blocks: Dict[str, str], verbose: bool = False, force: bool = False):
@@ -201,6 +217,7 @@ def save_to_file(code_blocks: Dict[str, str], verbose: bool = False, force: bool
             print(f"{key:50} {len(value.splitlines())} lines")
 ```
 
+__md-tangle2__
 ```python tangle:src/py2/md-tangle2
 
 def save_to_file(code_blocks, verbose=False, force=False):
@@ -225,6 +242,7 @@ def save_to_file(code_blocks, verbose=False, force=False):
 
 
 ## Script start
+__md-tangle__
 ```python tangle:src/py3/md-tangle
 
 if __name__ == "__main__":
@@ -233,6 +251,7 @@ if __name__ == "__main__":
     save_to_file(blocks, args.verbose, args.force)
 ```
 
+__md-tangle2__
 ```python tangle:src/py2/md-tangle2
 
 if __name__ == "__main__":
