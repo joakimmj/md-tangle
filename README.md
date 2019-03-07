@@ -23,6 +23,12 @@ blocks to given file. Supports `~` for home directory.
 If the file already exists, the user will be prompted with the option to overwrite,
 unless the `-f`/`--force` flag is added.
 
+### Flags
+
+* `-h`/`--help`: Show help message and exit
+* `-f`/`--force`: Force overwrite of files if the already exists
+* `-v`/`--verbose`: Show output
+  
 ## Usage
 
 Take the following example:
@@ -54,12 +60,6 @@ executing:
 $ md_tangle -v HelloWorld.md 
 helloWorld.js                                      2 lines
 styles/button.css                                  4 lines
-```
-
---OR--
-
-```bash
-$ md_tangle HelloWorld.md
 $ ls 
 helloWorld.js HelloWorld.md styles
 ```
