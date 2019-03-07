@@ -59,7 +59,7 @@ By adding installing `md-tangle` with `pip`, one could simply produce files from
 executing:
 
 ```bash
-$ md_tangle -v HelloWorld.md 
+$ md-tangle -v HelloWorld.md 
 helloWorld.js                                      2 lines
 styles/button.css                                  4 lines
 $ ls 
@@ -68,6 +68,12 @@ helloWorld.js HelloWorld.md styles
 
 > If one wishes to use Python 2, one could easily install `md-tangle2` instead.
 
+## Documentation
+
+The [documentation][8] for `md-tangle` is of course written in Markdown, and tangles to the source
+code.
+
+
 [1]: https://en.wikipedia.org/wiki/Org-mode
 [2]: https://orgmode.org/manual/Extracting-source-code.html
 [3]: https://www.gnu.org/software/emacs/
@@ -75,3 +81,4 @@ helloWorld.js HelloWorld.md styles
 [5]: https://en.wikipedia.org/wiki/Markup_language
 [6]: https://en.wikipedia.org/wiki/Literate_programming
 [7]: https://en.wikipedia.org/wiki/Markdown
+[8]: md-tangle.md
