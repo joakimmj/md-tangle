@@ -1,4 +1,4 @@
-# md_tangle.py
+# md-tangle
 
 This project is a result of wanting config and setup files to be part of a document 
 explaining my setup. I originally used [Org-mode][1] and [org-babel-tangle][2] in 
@@ -55,7 +55,7 @@ By adding some css ...
 
 ```
 
-By adding `md-tangle.py` to `$PATH`, one could simply produce files from this file by
+By adding installing `md-tangle` with `pip`, one could simply produce files from this file by
 executing:
 
 ```bash
@@ -65,6 +65,8 @@ styles/button.css                                  4 lines
 $ ls 
 helloWorld.js HelloWorld.md styles
 ```
+
+> If one wishes to use Python 2, one could easily install `md-tangle2` instead.
 
 [1]: https://en.wikipedia.org/wiki/Org-mode
 [2]: https://orgmode.org/manual/Extracting-source-code.html
