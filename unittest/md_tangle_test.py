@@ -22,10 +22,10 @@ class TestPatternMatchers(unittest.TestCase):
 
     def test_map_md_to_code_blocks(self):
         code_blocks = map_md_to_code_blocks("example.md")
-        self.assertTrue("test.css" in code_blocks.keys())
-        self.assertTrue("test.js" in code_blocks.keys())
-        self.assertEqual(len(code_blocks["test.css"].splitlines()), 8)
-        self.assertEqual(len(code_blocks["test.js"].splitlines()), 2)
+        self.assertTrue("build/test.css" in code_blocks.keys())
+        self.assertTrue("build/test.js" in code_blocks.keys())
+        self.assertEqual(len(code_blocks["build/test.css"].splitlines()), 8)
+        self.assertEqual(len(code_blocks["build/test.js"].splitlines()), 2)
 
 
 if __name__ == '__main__':

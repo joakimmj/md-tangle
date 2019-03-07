@@ -3,21 +3,21 @@
 ## Some info about files
 
 This is some css.. 
-~~~~css tangle:test.css
+~~~~css tangle:build/test.css
 #button1 {
     border: none;
 }
 ~~~~
 
 Could also be written in javascript:
-```javascript tangle:test.js
+```javascript tangle:build/test.js
 console.log("Hello world")
 ```
 
 ## More info about the css file
 
 Add to css-file
-```css tangle:test.css <random string>
+```css tangle:build/test.css <random string>
 #button2 {
     border: none;
 }
