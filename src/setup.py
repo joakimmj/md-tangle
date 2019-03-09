@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 __general_setup = dict(
-    version='1.0.1',
+    version='1.1.0',
     author="Joakim Myrvoll Johansen",
     author_email="joakimmyrvoll@gmail.com",
     long_description=long_description,
