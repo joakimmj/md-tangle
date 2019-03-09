@@ -16,8 +16,14 @@ Markdown is a plaintext-ish format popular with programmers. It's simple, easy a
 already has support for embedding code blocks using ``` or ~~~~, mostly 
 for the purposes of syntax highlighting in documentation.
 
+## Installing
+This CLI tool can easily be utilized by adding `md-tangle` to your `PATH`, or by installing the package with `pip`.
+
+See the package on [https://pypi.org/project/md-tangle/](https://pypi.org/project/md-tangle/), or just install
+with `pip install md-tangle`.
+
 ## Command
-By adding the command `tangle:<path/filename>`, this tool will tangle tagged code
+By adding the keyword `tangle:<path/filename>`, this tool will tangle tagged code
 blocks to given file. Supports `~` for home directory.
 
 One can tangle the code block to multiple files by separating the files with chosen separator (default: `,`).
@@ -68,8 +74,7 @@ By adding some css ...
 ~~~~
 ```
 
-By adding installing `md-tangle` with `pip`, one could simply produce files from this file by
-executing:
+By installing `md-tangle` with `pip`, one could simply produce files from this file by executing:
 
 ```bash
 $ md-tangle -v HelloWorld.md 
