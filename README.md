@@ -20,6 +20,8 @@ for the purposes of syntax highlighting in documentation.
 By adding the command `tangle:<path/filename>`, this tool will tangle tagged code
 blocks to given file. Supports `~` for home directory.
 
+One can tangle the code block to multiple files by separating the files with chosen separator (default: `,`).
+
 If the file already exists, the user will be prompted with the option to overwrite,
 unless the `-f`/`--force` flag is added.
 
@@ -28,7 +30,8 @@ unless the `-f`/`--force` flag is added.
 * `-h`/`--help`: Show help message and exit
 * `-f`/`--force`: Force overwrite of files if the already exists
 * `-v`/`--verbose`: Show output
-  
+* `-s`/`--separator`: Separator for tangle destinations (default=',')
+
 ## Usage
 
 Take the following example:
@@ -36,11 +39,18 @@ Take the following example:
 `HelloWorld.md`
 ```markdown
 # Some title
-
 Describing the following code... bla bla.
 
 ~~~~javascript tangle:helloWorld.js
-console.log("Hello, world");
+console.log("Hello, ");
+console.log("world");
+~~~~
+
+## Styling
+Adding header for my css files:
+
+~~~~css tangle:styles/button.css,styles/input.css
+/* Styling for mye awesome app */
 ~~~~
 
 By adding some css ... 
@@ -51,6 +61,11 @@ By adding some css ...
 }
 ~~~~
 
+~~~~css tangle:styles/input.css
+#button1 {
+    border: none;
+}
+~~~~
 ```
 
 By adding installing `md-tangle` with `pip`, one could simply produce files from this file by
@@ -60,6 +75,7 @@ executing:
 $ md-tangle -v HelloWorld.md 
 helloWorld.js                                      2 lines
 styles/button.css                                  4 lines
+styles/input.css                                   4 lines
 $ ls 
 helloWorld.js HelloWorld.md styles
 ```
