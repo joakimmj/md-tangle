@@ -4,12 +4,12 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 __general_setup = dict(
-    version='1.0.0',
+    version='1.0.1',
     author="Joakim Myrvoll Johansen",
     author_email="joakimmyrvoll@gmail.com",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/joakimmj/md_tangle",
+    url="https://github.com/joakimmj/md-tangle",
     packages=setuptools.find_packages(),
 )
 

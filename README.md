@@ -16,8 +16,6 @@ Markdown is a plaintext-ish format popular with programmers. It's simple, easy a
 already has support for embedding code blocks using ``` or ~~~~, mostly 
 for the purposes of syntax highlighting in documentation.
 
-Add some kind of header to all tangled files ?? 
-
 ## Command
 By adding the command `tangle:<path/filename>`, this tool will tangle tagged code
 blocks to given file. Supports `~` for home directory.
@@ -81,4 +79,4 @@ code.
 [5]: https://en.wikipedia.org/wiki/Markup_language
 [6]: https://en.wikipedia.org/wiki/Literate_programming
 [7]: https://en.wikipedia.org/wiki/Markdown
-[8]: DOCS.md
+[8]: https://github.com/joakimmj/md-tangle/blob/master/DOCS.md
