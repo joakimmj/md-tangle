@@ -1,4 +1,10 @@
+![Version] ![License] ![Format]
+
 # md-tangle
+
+| [![md-tangle]][PyPI-md-tangle] | [![md-tangle2]][PyPI-md-tangle2] |
+|--------------------------------|----------------------------------|
+| ![PyVer] ![Downloads]          |  ![PyVer2] ![Downloads2]         |
 
 This project is a result of wanting config and setup files to be part of a document 
 explaining my setup. I originally used [Org-mode][1] and [org-babel-tangle][2] in 
@@ -101,3 +107,17 @@ code.
 [6]: https://en.wikipedia.org/wiki/Literate_programming
 [7]: https://en.wikipedia.org/wiki/Markdown
 [8]: https://github.com/joakimmj/md-tangle/blob/master/DOCS.md
+
+[Version]: https://img.shields.io/github/tag/joakimmj/md-tangle.svg?label=version
+[License]: https://img.shields.io/github/license/joakimmj/md-tangle.svg
+[Format]: https://img.shields.io/pypi/format/md_tangle.svg
+
+[PyPI-md-tangle]: https://pypi.org/project/md-tangle
+[md-tangle]: https://img.shields.io/badge/md--tangle-PyPI-orange.svg
+[PyVer]: https://img.shields.io/pypi/pyversions/md-tangle.svg
+[Downloads]: https://img.shields.io/pypi/dm/md-tangle.svg
+
+[PyPI-md-tangle2]: https://pypi.org/project/md-tangle2
+[md-tangle2]: https://img.shields.io/badge/md--tangle2-PyPI-orange.svg
+[PyVer2]: https://img.shields.io/pypi/pyversions/md-tangle2.svg
+[Downloads2]: https://img.shields.io/pypi/dm/md-tangle2.svg
