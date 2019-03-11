@@ -10,6 +10,9 @@ I would prefer to use:
 * `os.makedirs(dir, exist_ok=True)` instead of `Path(dir).mkdir(exist_ok=True)`
 * `f"{filename:50} {lines} lines"` instead of `"{0: <50} {1} lines".format(filename, lines)`
 
+If installed with Python 2, `pathlib2` is a requirement. Since it's not part of the
+requirements for the Python 3 package, it's not listed in the requirements.
+
 ## Packaging
 
 ### \_\_init__.py
@@ -158,8 +161,9 @@ def map_md_to_code_blocks(filename, separator):
 ## Saving
 
 __Imports__
-`os.makedirs` does not support creating paths if already exists in Python 2. So we need use `Path` from
-`pathlib2` (Python 2 backport for `pathlib`).
+
+`os.makedirs` does not support creating paths if they already exists in Python 2. So we need use `Path` from
+`pathlib`/`pathlib2` (backport for Python 2).
 
 ```python tangle:md_tangle/save.py
 import os
