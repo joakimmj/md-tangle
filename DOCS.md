@@ -15,7 +15,7 @@ I would prefer to use:
 ### \_\_init__.py
 ```python tangle:md_tangle/__init__.py
 __title__ = 'md-tangle'
-__version__ = '1.1.1-35'
+__version__ = '1.2.0'
 __author__ = 'Joakim Myrvoll Johansen'
 __author_email__ = 'joakimmyrvoll@gmail.com'
 __license__ = 'MIT'
