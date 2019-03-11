@@ -1,11 +1,6 @@
-![Version] ![License] ![Format]
+[![app-badge]][PyPI-md-tangle] ![Version] ![License] ![Format] ![PyVer] ![Downloads]
 
 # md-tangle
-
-| [![md-tangle]][PyPI-md-tangle] | [![md-tangle2]][PyPI-md-tangle2] |
-|--------------------------------|----------------------------------|
-| ![PyVer] ![Downloads]          |  ![PyVer2] ![Downloads2]         |
-
 This project is a result of wanting config and setup files to be part of a document 
 explaining my setup. I originally used [Org-mode][1] and [org-babel-tangle][2] in 
 [Emacs][3] to achieve this. I really like Org-mode and Emacs, but I'm not fond of
@@ -25,8 +20,7 @@ for the purposes of syntax highlighting in documentation.
 ## Installing
 This CLI tool can easily be utilized by adding `md-tangle` to your `PATH`, or by installing the package with `pip`.
 
-See the package on [https://pypi.org/project/md-tangle/](https://pypi.org/project/md-tangle/), or just install
-with `pip install md-tangle`.
+See the package on [pypi.org][PyPI-md-tangle], or just install with `pip install md-tangle`.
 
 ## Command
 By adding the keyword `tangle:<path/filename>`, this tool will tangle tagged code
@@ -40,6 +34,7 @@ unless the `-f`/`--force` flag is added.
 ### Flags
 
 * `-h`/`--help`: Show help message and exit
+* `--version`: Show installed version
 * `-f`/`--force`: Force overwrite of files if the already exists
 * `-v`/`--verbose`: Show output
 * `-s`/`--separator`: Separator for tangle destinations (default=',')
@@ -91,8 +86,6 @@ $ ls
 helloWorld.js HelloWorld.md styles
 ```
 
-> If one wishes to use Python 2, one could easily install `md-tangle2` instead.
-
 ## Documentation
 
 The [documentation][8] for `md-tangle` is of course written in Markdown, and tangles to the source
@@ -108,16 +101,10 @@ code.
 [7]: https://en.wikipedia.org/wiki/Markdown
 [8]: https://github.com/joakimmj/md-tangle/blob/master/DOCS.md
 
+[app-badge]: https://img.shields.io/badge/md--tangle-PyPI-orange.svg
+[PyPI-md-tangle]: https://pypi.org/project/md-tangle
 [Version]: https://img.shields.io/github/tag/joakimmj/md-tangle.svg?label=version
 [License]: https://img.shields.io/github/license/joakimmj/md-tangle.svg
 [Format]: https://img.shields.io/pypi/format/md_tangle.svg
-
-[PyPI-md-tangle]: https://pypi.org/project/md-tangle
-[md-tangle]: https://img.shields.io/badge/md--tangle-PyPI-orange.svg
 [PyVer]: https://img.shields.io/pypi/pyversions/md-tangle.svg
 [Downloads]: https://img.shields.io/pypi/dm/md-tangle.svg
-
-[PyPI-md-tangle2]: https://pypi.org/project/md-tangle2
-[md-tangle2]: https://img.shields.io/badge/md--tangle2-PyPI-orange.svg
-[PyVer2]: https://img.shields.io/pypi/pyversions/md-tangle2.svg
-[Downloads2]: https://img.shields.io/pypi/dm/md-tangle2.svg

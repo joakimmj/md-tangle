@@ -4,4 +4,3 @@ build/
 venv/
 dist/
 md_tangle.egg-info/
-md_tangle2.egg-info/
