@@ -1,6 +1,6 @@
 [![app-badge]][PyPI-md-tangle] ![Version] ![License] ![Format] ![PyVer] ![Downloads]
 
-# md-tangle
+# [md-tangle][PyPI-md-tangle]
 This project is a result of wanting config and setup files to be part of a document 
 explaining my setup. I originally used [Org-mode][1] and [org-babel-tangle][2] in 
 [Emacs][3] to achieve this. I really like Org-mode and Emacs, but I'm not fond of
