@@ -37,6 +37,7 @@ unless the `-f`/`--force` flag is added.
 * `--version`: Show installed version
 * `-f`/`--force`: Force overwrite of files if the already exists
 * `-v`/`--verbose`: Show output
+* `-d`/`--destination`: Overwrite output destination
 * `-s`/`--separator`: Separator for tangle destinations (default=',')
 
 ## Usage
