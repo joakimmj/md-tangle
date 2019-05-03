@@ -11,6 +11,7 @@ def __get_args():
     parser.add_argument("--version", action='store_true', help="print version")
     parser.add_argument("-v", "--verbose", action='store_true', help="show output")
     parser.add_argument("-f", "--force", action='store_true', help="force overwrite of files")
+    parser.add_argument("-d", "--destination", type=str, help="overwrite output destination")
     parser.add_argument("-s", "--separator", type=str, help="separator for tangle destinations (default=',')",
                         default=",")
     return parser.parse_args()
@@ -29,7 +30,7 @@ def main():
         sys.exit(1)
 
     blocks = map_md_to_code_blocks(args.filename, args.separator)
-    save_to_file(blocks, args.verbose, args.force)
+    save_to_file(blocks, args.verbose, args.force, args.destination)
 
 
 if __name__ == '__main__':

@@ -11,21 +11,30 @@ except ImportError:
     from pathlib2 import Path  # Python 2 backport
 
 
-def save_to_file(code_blocks, verbose=False, force=False):
-    for key, value in code_blocks.items():
-        key = os.path.expanduser(key)
-        dir_name = os.path.dirname(key)
-        if dir_name is not "":
-            Path(dir_name).mkdir(exist_ok=True)
+def __create_dir(path):
+    dir_name = os.path.dirname(path)
 
-        if os.path.isfile(key) and not force:
-            overwrite = get_input("'{0}' already exists. Overwrite? (Y/n) ".format(key))
+    if dir_name is not "":
+        Path(dir_name).mkdir(exist_ok=True)
+
+
+def save_to_file(code_blocks, verbose=False, force=False, output_dest=None):
+    for path, value in code_blocks.items():
+        path = os.path.expanduser(path)
+
+        if output_dest is not None:
+            path = output_dest + "/" + os.path.basename(path)
+
+        __create_dir(path)
+
+        if os.path.isfile(path) and not force:
+            overwrite = get_input("'{0}' already exists. Overwrite? (Y/n) ".format(path))
             if overwrite != "" and overwrite.lower() != "y":
                 continue
 
-        with open(key, "w") as f:
+        with open(path, "w") as f:
             f.write(value)
             f.close()
 
         if verbose:
-            print("{0: <50} {1} lines".format(key, len(value.splitlines())))
+            print("{0: <50} {1} lines".format(path, len(value.splitlines())))

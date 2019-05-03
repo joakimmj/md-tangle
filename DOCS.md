@@ -51,6 +51,7 @@ def __get_args():
     parser.add_argument("--version", action='store_true', help="print version")
     parser.add_argument("-v", "--verbose", action='store_true', help="show output")
     parser.add_argument("-f", "--force", action='store_true', help="force overwrite of files")
+    parser.add_argument("-d", "--destination", type=str, help="overwrite output destination")
     parser.add_argument("-s", "--separator", type=str, help="separator for tangle destinations (default=',')", default=",")
     return parser.parse_args()
 ```
@@ -70,7 +71,7 @@ def main():
         sys.exit(1)
 
     blocks = map_md_to_code_blocks(args.filename, args.separator)
-    save_to_file(blocks, args.verbose, args.force)
+    save_to_file(blocks, args.verbose, args.force, args.destination)
 
 
 if __name__ == '__main__':
@@ -179,27 +180,41 @@ except ImportError:
     from pathlib2 import Path  # Python 2 backport
 ```
 
+### Create directory
+Creates directory if not existing
+
+```python tangle:md_tangle/save.py
+def __create_dir(path):
+    dir_name = os.path.dirname(path)
+
+    if dir_name is not "":
+        Path(dir_name).mkdir(exist_ok=True)
+
+```
+
 ### Saving to file
 This function writes the code blocks to it's destinations.
 
 ```python tangle:md_tangle/save.py
-def save_to_file(code_blocks, verbose=False, force=False):
-    for key, value in code_blocks.items():
-        key = os.path.expanduser(key)
-        dir_name = os.path.dirname(key)
-        if dir_name is not "":
-            Path(dir_name).mkdir(exist_ok=True)
+def save_to_file(code_blocks, verbose=False, force=False, output_dest=None):
+    for path, value in code_blocks.items():
+        path = os.path.expanduser(path)
 
-        if os.path.isfile(key) and not force:
-            overwrite = get_input("'{0}' already exists. Overwrite? (Y/n) ".format(key))
+        if output_dest is not None:
+            path = output_dest + "/" + os.path.basename(path)
+
+        __create_dir(path)
+
+        if os.path.isfile(path) and not force:
+            overwrite = get_input("'{0}' already exists. Overwrite? (Y/n) ".format(path))
             if overwrite != "" and overwrite.lower() != "y":
                 continue
 
-        with open(key, "w") as f:
+        with open(path, "w") as f:
             f.write(value)
             f.close()
 
         if verbose:
-            print("{0: <50} {1} lines".format(key, len(value.splitlines())))
+            print("{0: <50} {1} lines".format(path, len(value.splitlines())))
 
 ```
