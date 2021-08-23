@@ -32,7 +32,7 @@ def save_to_file(code_blocks, verbose=False, force=False, output_dest=None):
             if overwrite != "" and overwrite.lower() != "y":
                 continue
 
-        with open(path, "w") as f:
+        with open(path, "w", encoding="utf8") as f:
             f.write(value)
             f.close()
 

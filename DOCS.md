@@ -144,7 +144,7 @@ def __add_to_code_blocks(code_blocks, locations, line):
 
 
 def map_md_to_code_blocks(filename, separator):
-    md_file = open(filename, "r")
+    md_file = open(filename, "r", encoding="utf8")
     lines = md_file.readlines()
     locations = None
     code_blocks = {}
@@ -210,7 +210,7 @@ def save_to_file(code_blocks, verbose=False, force=False, output_dest=None):
             if overwrite != "" and overwrite.lower() != "y":
                 continue
 
-        with open(path, "w") as f:
+        with open(path, "w", encoding="utf8") as f:
             f.write(value)
             f.close()
 

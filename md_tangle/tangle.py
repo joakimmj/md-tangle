@@ -34,7 +34,7 @@ def __add_to_code_blocks(code_blocks, locations, line):
 
 
 def map_md_to_code_blocks(filename, separator):
-    md_file = open(filename, "r")
+    md_file = open(filename, "r", encoding="utf8")
     lines = md_file.readlines()
     locations = None
     code_blocks = {}
