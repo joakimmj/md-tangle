@@ -1,4 +1,5 @@
 import re
+from io import open
 
 TANGLE_CMD = "tangle:"
 TANGLE_REGEX = "tangle:+([^\s]+)"

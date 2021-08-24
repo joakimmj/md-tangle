@@ -1,4 +1,5 @@
 import os
+from io import open
 
 try:
     get_input = raw_input  # fix for Python 2

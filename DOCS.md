@@ -83,6 +83,7 @@ if __name__ == '__main__':
 __Imports__
 ```python tangle:md_tangle/tangle.py
 import re
+from io import open
 ```
 
 ### Regex to fetch the keywords
@@ -168,6 +169,7 @@ __Imports__
 
 ```python tangle:md_tangle/save.py
 import os
+from io import open
 
 try:
     get_input = raw_input  # fix for Python 2
