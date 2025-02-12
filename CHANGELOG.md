@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.4.2] - 2025-02-12
+### Changed
+- Fix: use correct dictionary for getting common path
+
 ## [1.4.1] - 2025-02-12
 ### Changed
 - Fix: use original block dictionary when looping
@@ -43,7 +47,8 @@ All notable changes to this project will be documented in this file.
 - First version pushed to [PyPI].
 
 
-[Unreleased]: https://github.com/joakimmj/md-tangle/compare/v1.4.1...HEAD
+[Unreleased]: https://github.com/joakimmj/md-tangle/compare/v1.4.2...HEAD
+[1.4.2]: https://github.com/joakimmj/md-tangle/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/joakimmj/md-tangle/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/joakimmj/md-tangle/compare/v1.3.1...v1.4.0
 [1.3.1]: https://github.com/joakimmj/md-tangle/compare/v1.3.0...v1.3.1

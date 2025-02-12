@@ -20,7 +20,7 @@ def __create_dir(path):
 
 def override_output_dest(code_blocks, output_dest):
     blocks = {}
-    common_root = os.path.commonpath(blocks.keys())
+    common_root = os.path.commonpath(code_blocks.keys())
 
     for path in code_blocks.keys():
         new_path = path.replace(common_root, output_dest)
