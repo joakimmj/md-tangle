@@ -18,7 +18,7 @@ requirements for the Python 3 package, it's not listed in the requirements.
 ### \_\_init__.py
 ```python tangle:md_tangle/__init__.py
 __title__ = 'md-tangle'
-__version__ = '1.3.1'
+__version__ = '1.4.0'
 __author__ = 'Joakim Myrvoll Johansen'
 __author_email__ = 'joakimmyrvoll@gmail.com'
 __license__ = 'MIT'
