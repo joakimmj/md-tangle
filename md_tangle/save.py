@@ -19,12 +19,12 @@ def __create_dir(path):
         Path(dir_name).mkdir(exist_ok=True)
 
 def override_output_dest(code_blocks, output_dest):
-    blocks = code_blocks.copy()
+    blocks = {}
     common_root = os.path.commonpath(blocks.keys())
 
-    for path, _ in blocks.items():
+    for path in code_blocks.keys():
         new_path = path.replace(common_root, output_dest)
-        blocks[new_path] = blocks.pop(path)
+        blocks[new_path] = code_blocks[path]
 
     return blocks
 
