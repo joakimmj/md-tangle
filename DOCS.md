@@ -18,7 +18,7 @@ requirements for the Python 3 package, it's not listed in the requirements.
 ### \_\_init__.py
 ```python tangle:md_tangle/__init__.py
 __title__ = 'md-tangle'
-__version__ = '1.4.2'
+__version__ = '1.4.3'
 __author__ = 'Joakim Myrvoll Johansen'
 __author_email__ = 'joakimmyrvoll@gmail.com'
 __license__ = 'MIT'
@@ -204,11 +204,18 @@ This function changes save path to be the overridden path.
 ```python tangle:md_tangle/save.py
 def override_output_dest(code_blocks, output_dest):
     blocks = {}
-    common_root = os.path.commonpath(code_blocks.keys())
+    common = os.path.commonpath(code_blocks.keys())
 
     for path in code_blocks.keys():
-        new_path = path.replace(common_root, output_dest)
-        blocks[new_path] = code_blocks[path]
+        filename = os.path.basename(path)
+        dir = os.path.dirname(path)
+
+        if common == "" or common == path:
+            new_dir = output_dest
+        else:
+            new_dir = dir.replace(common, output_dest)
+
+        blocks[new_dir + "/" + filename] = code_blocks[path]
 
     return blocks
 

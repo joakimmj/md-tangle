@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [1.4.3] - 2025-02-12
+### Changed
+- Fix: fix cases where only filename or one path
+
 ## [1.4.2] - 2025-02-12
 ### Changed
 - Fix: use correct dictionary for getting common path
@@ -47,7 +51,8 @@ All notable changes to this project will be documented in this file.
 - First version pushed to [PyPI].
 
 
-[Unreleased]: https://github.com/joakimmj/md-tangle/compare/v1.4.2...HEAD
+[Unreleased]: https://github.com/joakimmj/md-tangle/compare/v1.4.3...HEAD
+[1.4.3]: https://github.com/joakimmj/md-tangle/compare/v1.4.1...v1.4.3
 [1.4.2]: https://github.com/joakimmj/md-tangle/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/joakimmj/md-tangle/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/joakimmj/md-tangle/compare/v1.3.1...v1.4.0
