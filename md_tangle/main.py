@@ -1,7 +1,7 @@
 import argparse
 import sys
 import md_tangle
-from md_tangle.save import save_to_file
+from md_tangle.save import override_output_dest, save_to_file
 from md_tangle.tangle import map_md_to_code_blocks
 
 
@@ -30,8 +30,11 @@ def main():
         sys.exit(1)
 
     blocks = map_md_to_code_blocks(args.filename, args.separator)
-    save_to_file(blocks, args.verbose, args.force, args.destination)
 
+    if args.destination is not None:
+        blocks = override_output_dest(blocks, args.destination)
+
+    save_to_file(blocks, args.verbose, args.force)
 
 if __name__ == '__main__':
     main()

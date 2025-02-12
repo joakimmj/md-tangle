@@ -37,7 +37,7 @@ __Imports__
 import argparse
 import sys
 import md_tangle
-from md_tangle.save import save_to_file
+from md_tangle.save import override_output_dest, save_to_file
 from md_tangle.tangle import map_md_to_code_blocks
 ```
 
@@ -71,7 +71,11 @@ def main():
         sys.exit(1)
 
     blocks = map_md_to_code_blocks(args.filename, args.separator)
-    save_to_file(blocks, args.verbose, args.force, args.destination)
+
+    if args.destination is not None:
+        blocks = override_output_dest(blocks, args.destination)
+
+    save_to_file(blocks, args.verbose, args.force)
 
 
 if __name__ == '__main__':
@@ -189,8 +193,24 @@ Creates directory if not existing
 def __create_dir(path):
     dir_name = os.path.dirname(path)
 
-    if dir_name is not "":
+    if dir_name != "":
         Path(dir_name).mkdir(exist_ok=True)
+
+```
+
+### Override output destination
+This function changes save path to be the overridden path.
+
+```python tangle:md_tangle/save.py
+def override_output_dest(code_blocks, output_dest):
+    blocks = code_blocks.copy()
+    common_root = os.path.commonpath(blocks.keys())
+
+    for path, _ in blocks.items():
+        new_path = path.replace(common_root, output_dest)
+        blocks[new_path] = blocks.pop(path)
+
+    return blocks
 
 ```
 
@@ -198,12 +218,9 @@ def __create_dir(path):
 This function writes the code blocks to it's destinations.
 
 ```python tangle:md_tangle/save.py
-def save_to_file(code_blocks, verbose=False, force=False, output_dest=None):
+def save_to_file(code_blocks, verbose=False, force=False):
     for path, value in code_blocks.items():
         path = os.path.expanduser(path)
-
-        if output_dest is not None:
-            path = output_dest + "/" + os.path.basename(path)
 
         __create_dir(path)
 

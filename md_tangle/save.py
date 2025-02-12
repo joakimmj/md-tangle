@@ -15,16 +15,22 @@ except ImportError:
 def __create_dir(path):
     dir_name = os.path.dirname(path)
 
-    if dir_name is not "":
+    if dir_name != "":
         Path(dir_name).mkdir(exist_ok=True)
 
+def override_output_dest(code_blocks, output_dest):
+    blocks = code_blocks.copy()
+    common_root = os.path.commonpath(blocks.keys())
 
-def save_to_file(code_blocks, verbose=False, force=False, output_dest=None):
+    for path, _ in blocks.items():
+        new_path = path.replace(common_root, output_dest)
+        blocks[new_path] = blocks.pop(path)
+
+    return blocks
+
+def save_to_file(code_blocks, verbose=False, force=False):
     for path, value in code_blocks.items():
         path = os.path.expanduser(path)
-
-        if output_dest is not None:
-            path = output_dest + "/" + os.path.basename(path)
 
         __create_dir(path)
 
