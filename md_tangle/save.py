@@ -6,17 +6,12 @@ try:
 except NameError:
     get_input = input
 
-try:
-    from pathlib import Path
-except ImportError:
-    from pathlib2 import Path  # Python 2 backport
-
 
 def __create_dir(path):
     dir_name = os.path.dirname(path)
 
     if dir_name != "":
-        Path(dir_name).mkdir(exist_ok=True)
+        os.makedirs(dir_name, exist_ok=True)
 
 def override_output_dest(code_blocks, output_dest):
     blocks = {}
