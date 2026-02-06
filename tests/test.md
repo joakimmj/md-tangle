@@ -1,13 +1,13 @@
 # WexTerm
 
 Create config
-```lua tangle:tests/output/basic/wezterm.lua
+```lua tangle:{"dest":["tests/output/basic/wezterm.lua"]}
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 ```
 
 Set theme
-```lua tangle:tests/output/basic/wezterm.lua
+```lua tangle:{"dest":["tests/output/basic/wezterm.lua"]}
 config.font = wezterm.font_with_fallback({
     { family = 'JetBrainsMono Nerd Font', weight = 'DemiBold' },
     { family = 'JetBrains Mono', weight = 'DemiBold' },
@@ -45,7 +45,7 @@ config.color_scheme = "redox";
 ```
 
 Window decorations
-```lua tangle:tests/output/basic/wezterm.lua
+```lua tangle:{"dest":["tests/output/basic/wezterm.lua"]}
 config.enable_tab_bar = false
 config.window_decorations = 'RESIZE'
 
@@ -61,7 +61,7 @@ end)
 ```
 
 Keymaps
-```lua tangle:tests/output/basic/wezterm.lua
+```lua tangle:{"dest":["tests/output/basic/wezterm.lua"]}
 config.disable_default_key_bindings = true
 
 local act = wezterm.action
@@ -82,7 +82,7 @@ config.keys = {
 ```
 
 Return the final config
-```lua tangle:tests/output/basic/wezterm.lua
+```lua tangle:{"dest":["tests/output/basic/wezterm.lua"]}
 return config
 ```
 
@@ -101,3 +101,8 @@ config.wsl_domains = {
 config.default_domain = 'WSL:Ubuntu'
 ```
 
+## Some test files
+
+```lua tangle:{"dest":["tests/output/basic/hello_world1.lua","tests/output/basic/hello_world2.lua"]}
+print("Hello, World")
+```

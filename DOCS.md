@@ -16,7 +16,7 @@ requirements for the Python 3 package, it's not listed in the requirements.
 ## Packaging
 
 ### \_\_init__.py
-```python tangle:md_tangle/__init__.py
+```python tangle:{"dest":["md_tangle/__init__.py"]}
 __title__ = 'md-tangle'
 __version__ = '1.4.4'
 __author__ = 'Joakim Myrvoll Johansen'
@@ -25,7 +25,7 @@ __license__ = 'MIT'
 ```
 
 ### \_\_main__.py
-```python tangle:md_tangle/__main__.py
+```python tangle:{"dest":["md_tangle/__main__.py"]}
 from . import main
 main.main()
 ```
@@ -33,7 +33,7 @@ main.main()
 ## Entry point
 
 __Imports__
-```python tangle:md_tangle/main.py
+```python tangle:{"dest":["md_tangle/main.py"]}
 import argparse
 import sys
 import md_tangle
@@ -44,7 +44,7 @@ from md_tangle.tangle import map_md_to_code_blocks
 ### Argument parsing
 Setup for all arguments
 
-```python tangle:md_tangle/main.py
+```python tangle:{"dest":["md_tangle/main.py"]}
 def __get_args():
     parser = argparse.ArgumentParser(description="Tangle code blocks from Markdown file.")
     parser.add_argument("filename", type=str, help="path to Markdown file", nargs='?')
@@ -52,12 +52,11 @@ def __get_args():
     parser.add_argument("-v", "--verbose", action='store_true', help="show output")
     parser.add_argument("-f", "--force", action='store_true', help="force overwrite of files")
     parser.add_argument("-d", "--destination", type=str, help="overwrite output destination")
-    parser.add_argument("-s", "--separator", type=str, help="separator for tangle destinations (default=',')", default=",")
     return parser.parse_args()
 ```
 
 ### main.py
-```python tangle:md_tangle/main.py
+```python tangle:{"dest":["md_tangle/main.py"]}
 def main():
     """Main program entry point"""
     args = __get_args()
@@ -70,7 +69,7 @@ def main():
         sys.stderr.write("The 'filename' argument is required.\n")
         sys.exit(1)
 
-    blocks = map_md_to_code_blocks(args.filename, args.separator)
+    blocks = map_md_to_code_blocks(args.filename)
 
     if args.destination is not None:
         blocks = override_output_dest(blocks, args.destination)
@@ -85,17 +84,18 @@ if __name__ == '__main__':
 ## Tangling
 
 __Imports__
-```python tangle:md_tangle/tangle.py
+```python tangle:{"dest":["md_tangle/tangle.py"]}
 import re
+import json
 from io import open
 ```
 
 ### Regex to fetch the keywords
 These are the different Regex's for finding code blocks, and the tangle keyword.
 
-```python tangle:md_tangle/tangle.py
+```python tangle:{"dest":["md_tangle/tangle.py"]}
 TANGLE_CMD = "tangle:"
-TANGLE_REGEX = "tangle:+([^\s]+)"
+TANGLE_REGEX = "tangle:+(.*?})"
 BLOCK_REGEX = "~{4}|`{3}"
 BLOCK_REGEX_START = "^(~{4}|`{3})"
 ```
@@ -104,7 +104,7 @@ BLOCK_REGEX_START = "^(~{4}|`{3})"
 This function check if the line starts with one of the code block separators, and
 it checks that it is only one on that line. So ```this``` is not read as a code block.
 
-```python tangle:md_tangle/tangle.py
+```python tangle:{"dest":["md_tangle/tangle.py"]}
 def __contains_code_block_separators(line):
     line = line.lstrip(' ')
     tangle = re.search(BLOCK_REGEX_START, line)
@@ -116,19 +116,19 @@ def __contains_code_block_separators(line):
     return starts_with_separator and only_one_separator
 ```
 
-### Get save location from keyword
-If the line includes one code block separator, this function will try to extract the tangle keyword.
+### Get tangle options from keyword
+If the line includes one code block separator, this function will try to extract the tangle options.
 
-```python tangle:md_tangle/tangle.py
-def __get_save_locations(line, separator):
+```python tangle:{"dest":["md_tangle/tangle.py"]}
+def __get_tangle_options(line):
     tangle = re.search(TANGLE_REGEX, line)
 
     if tangle is None:
         return None
 
     match = tangle.group(0)
-    locations = match.replace(TANGLE_CMD, '')
-    return locations.split(separator)
+    json_string = match.replace(TANGLE_CMD, '')
+    return json.loads(json_string)
 ```
 
 ### Map Markdown to code blocks
@@ -142,23 +142,23 @@ code_blocks = {
 ```
 
 __implementation__
-```python tangle:md_tangle/tangle.py
-def __add_to_code_blocks(code_blocks, locations, line):
-    for location in locations:
+```python tangle:{"dest":["md_tangle/tangle.py"]}
+def __add_to_code_blocks(code_blocks, options, line):
+    for location in options["dest"]:
         code_blocks[location] = code_blocks.get(location, "") + line
 
 
-def map_md_to_code_blocks(filename, separator):
+def map_md_to_code_blocks(filename):
     md_file = open(filename, "r", encoding="utf8")
     lines = md_file.readlines()
-    locations = None
+    options = None
     code_blocks = {}
 
     for line in lines:
         if __contains_code_block_separators(line):
-            locations = __get_save_locations(line, separator)
-        elif locations is not None:
-            __add_to_code_blocks(code_blocks, locations, line)
+            options = __get_tangle_options(line)
+        elif options is not None:
+            __add_to_code_blocks(code_blocks, options, line)
 
     md_file.close()
     return code_blocks
@@ -171,7 +171,7 @@ __Imports__
 `os.makedirs` does not support creating paths if they already exists in Python 2. So we need use `Path` from
 `pathlib`/`pathlib2` (backport for Python 2).
 
-```python tangle:md_tangle/save.py
+```python tangle:{"dest":["md_tangle/save.py"]}
 import os
 from io import open
 
@@ -189,7 +189,7 @@ except ImportError:
 ### Create directory
 Creates directory if not existing
 
-```python tangle:md_tangle/save.py
+```python tangle:{"dest":["md_tangle/save.py"]}
 def __create_dir(path):
     dir_name = os.path.dirname(path)
 
@@ -201,7 +201,7 @@ def __create_dir(path):
 ### Override output destination
 This function changes save path to be the overridden path.
 
-```python tangle:md_tangle/save.py
+```python tangle:{"dest":["md_tangle/save.py"]}
 def override_output_dest(code_blocks, output_dest):
     blocks = {}
     common = os.path.commonpath(code_blocks.keys())
@@ -224,7 +224,7 @@ def override_output_dest(code_blocks, output_dest):
 ### Saving to file
 This function writes the code blocks to it's destinations.
 
-```python tangle:md_tangle/save.py
+```python tangle:{"dest":["md_tangle/save.py"]}
 def save_to_file(code_blocks, verbose=False, force=False):
     for path, value in code_blocks.items():
         path = os.path.expanduser(path)

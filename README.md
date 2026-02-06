@@ -23,10 +23,10 @@ This CLI tool can easily be utilized by adding `md-tangle` to your `PATH`, or by
 See the package on [pypi.org][PyPI-md-tangle], or just install with `pip install md-tangle`.
 
 ## Command
-By adding the keyword `tangle:<path/filename>`, this tool will tangle tagged code
-blocks to given file. Supports `~` for home directory.
+By adding the keyword `tangle:{"dest":["<path/filename>"]}`, this tool will tangle tagged code
+blocks to given files. Supports `~` for home directory.
 
-One can tangle the code block to multiple files by separating the files with chosen separator (default: `,`).
+One can tangle the code block to multiple files by adding multiple files in list.
 
 If the file already exists, the user will be prompted with the option to overwrite,
 unless the `-f`/`--force` flag is added.
@@ -38,7 +38,6 @@ unless the `-f`/`--force` flag is added.
 * `-f`/`--force`: Force overwrite of files if the already exists
 * `-v`/`--verbose`: Show output
 * `-d`/`--destination`: Overwrite output destination
-* `-s`/`--separator`: Separator for tangle destinations (default=',')
 
 ## Usage
 
@@ -49,7 +48,7 @@ Take the following example:
 # Some title
 Describing the following code... bla bla.
 
-~~~~javascript tangle:helloWorld.js
+~~~~javascript tangle:{"dest":["helloWorld.js"]}
 console.log("Hello, ");
 console.log("world");
 ~~~~
@@ -57,19 +56,19 @@ console.log("world");
 ## Styling
 Adding header for my css files:
 
-~~~~css tangle:styles/button.css,styles/input.css
+~~~~css tangle:{"dest":["styles/button.css","styles/input.css"]}
 /* Styling for mye awesome app */
 ~~~~
 
 By adding some css ... 
 
-~~~~css tangle:styles/button.css
+~~~~css tangle:{"dest":["styles/button.css"]}
 #button1 {
     border: none;
 }
 ~~~~
 
-~~~~css tangle:styles/input.css
+~~~~css tangle:{"dest":["styles/input.css"]}
 #button1 {
     border: none;
 }
