@@ -1,39 +1,5 @@
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
-config.font = wezterm.font_with_fallback({
-    { family = 'JetBrainsMono Nerd Font', weight = 'DemiBold' },
-    { family = 'JetBrains Mono', weight = 'DemiBold' },
-})
-config.color_schemes = {
-    ["redox"] = {
-      foreground = "#DCE8E5",
-      background = "#2E3434",
-      cursor_bg = "#FFD7A0",
-      cursor_fg = "#2E3434",
-      cursor_border = "#FFD7A0",
-      selection_bg = "#3F4A4A",
-      selection_fg = "#E9F2EF",
-      scrollbar_thumb = "#3A4141",
-      split = "#3A4141",
-      ansi = {
-        "#2E3434", "#C26E63", "#7FB8A4", "#D6C38A",
-        "#6FAFBD", "#B28FA3", "#8FC7B7", "#DCE8E5"
-      },
-      brights = {
-        "#4A5353", "#E08A7F", "#A9D6C6", "#EBD9A8",
-        "#92CAD4", "#D3ABC0", "#B6E3D5", "#F1F6F4"
-      },
-      tab_bar = {
-        background = "#2E3434",
-        active_tab = { bg_color = "#3A4141", fg_color = "#E9F2EF", intensity = "Bold" },
-        inactive_tab = { bg_color = "#2E3434", fg_color = "#8FA7A3" },
-        inactive_tab_hover = { bg_color = "#343A3A", fg_color = "#DCE8E5" },
-        new_tab = { bg_color = "#2E3434", fg_color = "#8FA7A3" },
-        new_tab_hover = { bg_color = "#343A3A", fg_color = "#E9F2EF" },
-      },
-    },
-};
-config.color_scheme = "redox";
 config.enable_tab_bar = false
 config.window_decorations = 'RESIZE'
 

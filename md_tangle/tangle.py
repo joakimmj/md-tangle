@@ -34,7 +34,19 @@ def __add_to_code_blocks(code_blocks, options, line):
         code_blocks[location] = code_blocks.get(location, "") + line
 
 
-def map_md_to_code_blocks(filename):
+def __should_include_block(tags_to_include, options):
+    tags = options.get("tags", None)
+
+    if tags is None:
+        return True
+
+    if any(tag in tags for tag in tags_to_include):
+        return True
+
+    return False
+
+
+def map_md_to_code_blocks(filename, tags_to_include):
     md_file = open(filename, "r", encoding="utf8")
     lines = md_file.readlines()
     options = None
@@ -43,7 +55,7 @@ def map_md_to_code_blocks(filename):
     for line in lines:
         if __contains_code_block_separators(line):
             options = __get_tangle_options(line)
-        elif options is not None:
+        elif options is not None and __should_include_block(tags_to_include, options):
             __add_to_code_blocks(code_blocks, options, line)
 
     md_file.close()

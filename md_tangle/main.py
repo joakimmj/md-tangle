@@ -12,6 +12,7 @@ def __get_args():
     parser.add_argument("-v", "--verbose", action='store_true', help="show output")
     parser.add_argument("-f", "--force", action='store_true', help="force overwrite of files")
     parser.add_argument("-d", "--destination", type=str, help="overwrite output destination")
+    parser.add_argument("-i", "--include", type=str, default="", help="include tagged code blocks (separator=',')")
     return parser.parse_args()
 
 
@@ -27,7 +28,8 @@ def main():
         sys.stderr.write("The 'filename' argument is required.\n")
         sys.exit(1)
 
-    blocks = map_md_to_code_blocks(args.filename)
+    tags_to_include = args.include.split(",") if args.include else []
+    blocks = map_md_to_code_blocks(args.filename, tags_to_include)
 
     if args.destination is not None:
         blocks = override_output_dest(blocks, args.destination)

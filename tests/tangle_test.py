@@ -12,6 +12,7 @@ class TangleTest(unittest.TestCase):
             mock_get_args.return_value.destination = None
             mock_get_args.return_value.verbose = False
             mock_get_args.return_value.version = False
+            mock_get_args.return_value.include = ""
             main()
 
         output_file = "tests/output/basic/wezterm.lua"
@@ -22,11 +23,12 @@ class TangleTest(unittest.TestCase):
         with open(output_file, "r") as f:
             content = f.read()
             self.assertIn("local wezterm = require 'wezterm'", content)
-            self.assertIn("config.font = wezterm.font_with_fallback", content)
+            self.assertNotIn("config.font = wezterm.font_with_fallback", content)
             self.assertIn("config.enable_tab_bar = false", content)
             self.assertIn("config.disable_default_key_bindings = true", content)
-            self.assertIn("return config", content)
             self.assertNotIn("config.wsl_domains", content)
+            self.assertIn("return config", content)
+            self.assertNotIn("-- not tangled", content)
 
     def test_tangle_overwrite_destingation(self):
         output_dir = "tests/output/overridden-path"
@@ -36,6 +38,7 @@ class TangleTest(unittest.TestCase):
             mock_get_args.return_value.destination = output_dir
             mock_get_args.return_value.verbose = False
             mock_get_args.return_value.version = False
+            mock_get_args.return_value.include = "theme"
             main()
 
         output_file = os.path.join(output_dir, "wezterm.lua")
@@ -49,5 +52,33 @@ class TangleTest(unittest.TestCase):
             self.assertIn("config.font = wezterm.font_with_fallback", content)
             self.assertIn("config.enable_tab_bar = false", content)
             self.assertIn("config.disable_default_key_bindings = true", content)
-            self.assertIn("return config", content)
             self.assertNotIn("config.wsl_domains", content)
+            self.assertIn("return config", content)
+            self.assertNotIn("-- not tangled", content)
+
+    def test_tangle_tag(self):
+        output_dir = "tests/output/with-tags"
+        with patch.object(main_module, "__get_args") as mock_get_args:
+            mock_get_args.return_value.filename = "tests/test.md"
+            mock_get_args.return_value.force = True
+            mock_get_args.return_value.destination = output_dir
+            mock_get_args.return_value.verbose = False
+            mock_get_args.return_value.version = False
+            mock_get_args.return_value.include = "styling,wsl"
+            main()
+
+        output_file = os.path.join(output_dir, "wezterm.lua")
+        self.assertTrue(os.path.exists(output_file))
+        self.assertTrue(os.path.exists("tests/output/basic/hello_world1.lua"))
+        self.assertTrue(os.path.exists("tests/output/basic/hello_world2.lua"))
+
+        with open(output_file, "r") as f:
+            content = f.read()
+            self.assertIn("local wezterm = require 'wezterm'", content)
+            self.assertIn("config.font = wezterm.font_with_fallback", content)
+            self.assertIn("config.enable_tab_bar = false", content)
+            self.assertIn("config.disable_default_key_bindings = true", content)
+            self.assertIn("config.wsl_domains", content)
+            self.assertIn("return config", content)
+            self.assertNotIn("-- not tangled", content)
+
