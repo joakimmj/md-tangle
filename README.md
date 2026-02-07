@@ -23,13 +23,17 @@ This CLI tool can easily be utilized by adding `md-tangle` to your `PATH`, or by
 See the package on [pypi.org][PyPI-md-tangle], or just install with `pip install md-tangle`.
 
 ## Command
-By adding the keyword `tangle:{"dest":["<path/filename>"]}`, this tool will tangle tagged code
-blocks to given files. Supports `~` for home directory.
+By adding the keyword `tangle:<options>`, this tool will tangle tagged code
+blocks based on provided options.
 
-One can tangle the code block to multiple files by adding multiple files in list.
+### Options
 
-If the file already exists, the user will be prompted with the option to overwrite,
-unless the `-f`/`--force` flag is added.
+The options should be given as a valid JSON. The valid keys are:
+- `"dest"`: This should be a list of destination files (supports `~` for home directory)
+- `"tags"`: This is an optional list of tags required to be included if
+            code block should be added
+
+Example: `tangle:{"dest":["<path/filename>"],"tags":["some-tag"]}`
 
 ### Flags
 
@@ -38,6 +42,7 @@ unless the `-f`/`--force` flag is added.
 * `-f`/`--force`: Force overwrite of files if the already exists
 * `-v`/`--verbose`: Show output
 * `-d`/`--destination`: Overwrite output destination
+* `-i`/`--include`: Include tagged code blocks (separator=',')
 
 ## Usage
 

@@ -99,13 +99,41 @@ Return the final config
 return config
 ```
 
-## Some non-tangled code block
+## Test cases
+
+### No tangle command
 
 ```lua
 -- not tangled
 ```
 
-## Some test files
+### Not valid JSON
+
+```lua tangle:tests/output/failing
+-- not valid JSON
+```
+
+```lua tangle:{tests/output/failing}
+-- not valid JSON
+```
+
+### No destionation files
+
+```lua tangle:{"dest":[]}
+-- no destination files
+```
+
+```lua tangle:{}
+-- no destination files
+```
+
+### Invalid destination
+
+```lua tangle:{"dest":"tests/output/invalid"}
+-- destinations not a list
+```
+
+### Multiple files
 
 ```lua tangle:{"dest":["tests/output/basic/hello_world1.lua","tests/output/basic/hello_world2.lua"]}
 print("Hello, World")

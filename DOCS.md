@@ -52,6 +52,7 @@ def __get_args():
     parser.add_argument("-v", "--verbose", action='store_true', help="show output")
     parser.add_argument("-f", "--force", action='store_true', help="force overwrite of files")
     parser.add_argument("-d", "--destination", type=str, help="overwrite output destination")
+    parser.add_argument("-i", "--include", type=str, default="", help="include tagged code blocks (separator=',')")
     return parser.parse_args()
 ```
 
@@ -69,7 +70,8 @@ def main():
         sys.stderr.write("The 'filename' argument is required.\n")
         sys.exit(1)
 
-    blocks = map_md_to_code_blocks(args.filename)
+    tags_to_include = args.include.split(",") if args.include else []
+    blocks = map_md_to_code_blocks(args.filename, tags_to_include)
 
     if args.destination is not None:
         blocks = override_output_dest(blocks, args.destination)
@@ -131,6 +133,23 @@ def __get_tangle_options(line):
     return json.loads(json_string)
 ```
 
+### Check if codeblock should be included
+If the code block is tagged, at least one of the tags should be included as
+with the `-i`/`--include` argument.
+
+```python tangle:{"dest":["md_tangle/tangle.py"]}
+def __should_include_block(tags_to_include, options):
+    tags = options.get("tags", None)
+
+    if tags is None:
+        return True
+
+    if any(tag in tags for tag in tags_to_include):
+        return True
+
+    return False
+```
+
 ### Map Markdown to code blocks
 These functions simply add the lines in the code blocks to it's destinations. The format on this
 data model is:
@@ -148,7 +167,7 @@ def __add_to_code_blocks(code_blocks, options, line):
         code_blocks[location] = code_blocks.get(location, "") + line
 
 
-def map_md_to_code_blocks(filename):
+def map_md_to_code_blocks(filename, tags_to_include):
     md_file = open(filename, "r", encoding="utf8")
     lines = md_file.readlines()
     options = None
@@ -157,7 +176,7 @@ def map_md_to_code_blocks(filename):
     for line in lines:
         if __contains_code_block_separators(line):
             options = __get_tangle_options(line)
-        elif options is not None:
+        elif options is not None and __should_include_block(tags_to_include, options):
             __add_to_code_blocks(code_blocks, options, line)
 
     md_file.close()

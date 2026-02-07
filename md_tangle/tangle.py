@@ -19,6 +19,12 @@ def __contains_code_block_separators(line):
     return starts_with_separator and only_one_separator
 
 
+def __validate_list_of_strings(list_of_strings):
+    if isinstance(list_of_strings, list) and all(isinstance(element, str) for element in list_of_strings):
+        return list_of_strings
+    return []
+
+
 def __get_tangle_options(line):
     tangle = re.search(TANGLE_REGEX, line)
 
@@ -27,23 +33,33 @@ def __get_tangle_options(line):
 
     match = tangle.group(0)
     json_string = match.replace(TANGLE_CMD, '')
-    return json.loads(json_string)
-
-def __add_to_code_blocks(code_blocks, options, line):
-    for location in options["dest"]:
-        code_blocks[location] = code_blocks.get(location, "") + line
+    try:
+        options = json.loads(json_string)
+        return { 
+            "dest": __validate_list_of_strings(options.get("dest", [])),
+            "tags": __validate_list_of_strings(options.get("tags", []))
+        }
+    except json.decoder.JSONDecodeError:
+        print(f"Invalid options: '{json_string}'")
+        return None
 
 
 def __should_include_block(tags_to_include, options):
-    tags = options.get("tags", None)
+    print(f"--- options={options}, tags_to_include={tags_to_include}")
+    tags = options.get("tags", [])
 
-    if tags is None:
+    if not tags:
         return True
 
     if any(tag in tags for tag in tags_to_include):
         return True
 
     return False
+
+
+def __add_to_code_blocks(code_blocks, options, line):
+    for location in options.get("dest", []):
+        code_blocks[location] = code_blocks.get(location, "") + line
 
 
 def map_md_to_code_blocks(filename, tags_to_include):
