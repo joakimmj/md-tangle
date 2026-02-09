@@ -1,13 +1,5 @@
-# WexTerm
-
-Create config
-```lua tangle:tests/output/basic/wezterm.lua
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
-```
-
-Set theme
-```lua tangle:tests/output/basic/wezterm.lua tags:styling,theme
 config.font = wezterm.font_with_fallback({
     { family = 'JetBrainsMono Nerd Font', weight = 'DemiBold' },
     { family = 'JetBrains Mono', weight = 'DemiBold' },
@@ -42,10 +34,6 @@ config.color_schemes = {
     },
 };
 config.color_scheme = "redox";
-```
-
-Window decorations
-```lua tangle:tests/output/basic/wezterm.lua
 config.enable_tab_bar = false
 config.window_decorations = 'RESIZE'
 
@@ -58,10 +46,6 @@ wezterm.on('toggle-window-decorations', function(window, pane)
     end
     window:set_config_overrides(overrides)
 end)
-```
-
-Keymaps
-```lua tangle:tests/output/basic/wezterm.lua
 config.disable_default_key_bindings = true
 
 local act = wezterm.action
@@ -79,10 +63,6 @@ config.keys = {
     { key = ' ',   mods = 'CTRL|SHIFT',          action = act.QuickSelect },
     { key = 'F11', action = act.ToggleFullScreen },
 }
-```
-
-If running WSL i Wezterm, add this:
-```lua tangle:tests/output/basic/wezterm.lua tags:wsl
 config.wsl_domains = {
     {
         name = 'WSL:Ubuntu',
@@ -92,35 +72,4 @@ config.wsl_domains = {
     },
 }
 config.default_domain = 'WSL:Ubuntu'
-```
-
-Return the final config
-```lua tangle:tests/output/basic/wezterm.lua
 return config
-```
-
-## Test cases
-
-### No tangle command
-
-```lua
--- not tangled
-```
-
-### No files
-
-```lua tangle:
--- no files
-```
-
-### Only tags
-
-```lua tags:some-tag
--- only tagged
-```
-
-### Multiple files
-
-```lua tangle:tests/output/basic/hello_world1.lua,tests/output/basic/hello_world2.lua
-print("Hello, World")
-```

@@ -52,7 +52,8 @@ def __get_args():
     parser.add_argument("-v", "--verbose", action='store_true', help="show output")
     parser.add_argument("-f", "--force", action='store_true', help="force overwrite of files")
     parser.add_argument("-d", "--destination", type=str, help="overwrite output destination")
-    parser.add_argument("-s", "--separator", type=str, help="separator for tangle destinations (default=',')", default=",")
+    parser.add_argument("-i", "--include", type=str, default="", help="include tagged code blocks (separator=',')")
+    parser.add_argument("-s", "--separator", type=str, help="separator for tangle destinations/tags (default=',')", default=",")
     return parser.parse_args()
 ```
 
@@ -70,7 +71,12 @@ def main():
         sys.stderr.write("The 'filename' argument is required.\n")
         sys.exit(1)
 
-    blocks = map_md_to_code_blocks(args.filename, args.separator)
+    tags_to_include = args.include.split(",") if args.include else []
+    blocks = map_md_to_code_blocks(args.filename, args.separator, tags_to_include)
+
+    if not blocks:
+        print("Found no blocks to tangle.")
+        return
 
     if args.destination is not None:
         blocks = override_output_dest(blocks, args.destination)
@@ -94,8 +100,8 @@ from io import open
 These are the different Regex's for finding code blocks, and the tangle keyword.
 
 ```python tangle:md_tangle/tangle.py
-TANGLE_CMD = "tangle:"
-TANGLE_REGEX = "tangle:+([^\s]+)"
+TANGLE_KEYWORD = "tangle:"
+TAGS_KEYWORD = "tags:"
 BLOCK_REGEX = "~{4}|`{3}"
 BLOCK_REGEX_START = "^(~{4}|`{3})"
 ```
@@ -116,19 +122,56 @@ def __contains_code_block_separators(line):
     return starts_with_separator and only_one_separator
 ```
 
-### Get save location from keyword
-If the line includes one code block separator, this function will try to extract the tangle keyword.
+### Get tangle options from keyword
+This function will try to extract the tangle options.
 
+Extract options after keyword
 ```python tangle:md_tangle/tangle.py
-def __get_save_locations(line, separator):
-    tangle = re.search(TANGLE_REGEX, line)
+def __get_cmd_options(line, keyword, separator):
+    command = re.search(keyword + "+([^\\s]+)", line)
 
-    if tangle is None:
+    if command is None:
         return None
 
-    match = tangle.group(0)
-    locations = match.replace(TANGLE_CMD, '')
-    return locations.split(separator)
+    match = command.group(0)
+    options = match.replace(keyword, '').split(separator)
+
+    if isinstance(options, list) and all(isinstance(option, str) for option in options):
+        return options
+
+    return []
+```
+
+Return options if `tangle` keyword exists
+```python tangle:md_tangle/tangle.py
+def __get_tangle_options(line, separator):
+    locations = __get_cmd_options(line, TANGLE_KEYWORD, separator)
+
+    if locations is None:
+        return None
+
+    tags = __get_cmd_options(line, TAGS_KEYWORD, separator)
+    return {
+        "locations": locations,
+        "tags": tags or []
+    }
+```
+
+### Check if codeblock should be included
+If the code block is tagged, at least one of the tags should be included as
+with the `-i`/`--include` argument.
+
+```python tangle:{"dest":["md_tangle/tangle.py"]}
+def __should_include_block(tags_to_include, options):
+    tags = options.get("tags")
+
+    if not tags:
+        return True
+
+    if any(tag in tags for tag in tags_to_include):
+        return True
+
+    return False
 ```
 
 ### Map Markdown to code blocks
@@ -143,22 +186,25 @@ code_blocks = {
 
 __implementation__
 ```python tangle:md_tangle/tangle.py
-def __add_to_code_blocks(code_blocks, locations, line):
-    for location in locations:
+def __add_to_code_blocks(code_blocks, options, line):
+    for location in options.get("locations"):
         code_blocks[location] = code_blocks.get(location, "") + line
+```
 
-
-def map_md_to_code_blocks(filename, separator):
+Add code blocks if has `tangle` location and include tags provided when running
+the `md-tangle` command.
+```python tangle:md_tangle/tangle.py
+def map_md_to_code_blocks(filename, separator, tags_to_include):
     md_file = open(filename, "r", encoding="utf8")
     lines = md_file.readlines()
-    locations = None
+    options = None
     code_blocks = {}
 
     for line in lines:
         if __contains_code_block_separators(line):
-            locations = __get_save_locations(line, separator)
-        elif locations is not None:
-            __add_to_code_blocks(code_blocks, locations, line)
+            options = __get_tangle_options(line, separator)
+        elif options is not None and __should_include_block(tags_to_include, options):
+            __add_to_code_blocks(code_blocks, options, line)
 
     md_file.close()
     return code_blocks

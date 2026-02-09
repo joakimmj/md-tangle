@@ -31,6 +31,11 @@ One can tangle the code block to multiple files by separating the files with cho
 If the file already exists, the user will be prompted with the option to overwrite,
 unless the `-f`/`--force` flag is added.
 
+### Tags
+
+By adding the keyword `tags:<tag>` to a tangled code block, it will NOT be included
+in the resulting files if not included with the `-i`/`--include` flag.
+
 ### Flags
 
 * `-h`/`--help`: Show help message and exit
@@ -38,6 +43,7 @@ unless the `-f`/`--force` flag is added.
 * `-f`/`--force`: Force overwrite of files if the already exists
 * `-v`/`--verbose`: Show output
 * `-d`/`--destination`: Overwrite output destination
+* `-i`/`--include`: Include tagged code blocks (separator=',')
 * `-s`/`--separator`: Separator for tangle destinations (default=',')
 
 ## Usage
@@ -74,6 +80,12 @@ By adding some css ...
     border: none;
 }
 ~~~~
+
+~~~~css tangle:styles/theme.css tags:theme
+#button1 {
+    border-color: red;
+}
+~~~~
 ```
 
 By installing `md-tangle` with `pip`, one could simply produce files from this file by executing:
@@ -84,6 +96,17 @@ helloWorld.js                                      2 lines
 styles/button.css                                  4 lines
 styles/input.css                                   4 lines
 $ ls 
+helloWorld.js HelloWorld.md styles
+```
+
+If you also want to include tagged code blocks, you can run
+```bash
+$ md-tangle -v -i theme HelloWorld.md
+helloWorld.js                                      2 lines
+styles/button.css                                  4 lines
+styles/input.css                                   4 lines
+styles/theme.css                                   3 lines
+$ ls
 helloWorld.js HelloWorld.md styles
 ```
 
