@@ -8,7 +8,7 @@ BLOCK_REGEX_START = "^(~{4}|`{3})"
 
 
 def __contains_code_block_separators(line):
-    line = line.lstrip(' ')
+    line = line.lstrip(" ")
     tangle = re.search(BLOCK_REGEX_START, line)
     starts_with_separator = tangle is not None
 
@@ -25,7 +25,7 @@ def __get_cmd_options(line, keyword, separator):
         return None
 
     match = command.group(0)
-    options = match.replace(keyword, '').split(separator)
+    options = match.replace(keyword, "").split(separator)
 
     if isinstance(options, list) and all(isinstance(option, str) for option in options):
         return options
@@ -40,10 +40,7 @@ def __get_tangle_options(line, separator):
         return None
 
     tags = __get_cmd_options(line, TAGS_KEYWORD, separator)
-    return {
-        "locations": locations,
-        "tags": tags or []
-    }
+    return {"locations": locations, "tags": tags or []}
 
 
 def __should_include_block(tags_to_include, options):

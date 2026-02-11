@@ -1,5 +1,0 @@
-__title__ = 'md-tangle'
-__version__ = '1.4.4'
-__author__ = 'Joakim Myrvoll Johansen'
-__author_email__ = 'joakimmyrvoll@gmail.com'
-__license__ = 'MIT'

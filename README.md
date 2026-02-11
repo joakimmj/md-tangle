@@ -18,9 +18,17 @@ already has support for embedding code blocks using ``` or ~~~~, mostly
 for the purposes of syntax highlighting in documentation.
 
 ## Installing
-This CLI tool can easily be utilized by adding `md-tangle` to your `PATH`, or by installing the package with `pip`.
+This CLI tool can be installed from PyPI using `pip`.
 
-See the package on [pypi.org][PyPI-md-tangle], or just install with `pip install md-tangle`.
+```bash
+pip install md-tangle
+```
+
+For local development, you can install it in editable mode:
+
+```bash
+pip install -e .
+```
 
 ## Command
 By adding the keyword `tangle:<path/filename>`, this tool will tangle tagged code

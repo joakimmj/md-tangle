@@ -1,8 +1,11 @@
 .idea
 __pycache__
 *.pyc
+*.pytest_cache
+*.orig
 build/
 venv/
 .venv/
 dist/
-md_tangle.egg-info/
+*.egg-info/
+.mypy_cache

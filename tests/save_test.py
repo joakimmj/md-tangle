@@ -55,31 +55,37 @@ class SaveToFileTest(unittest.TestCase):
         if os.path.exists(self.temp_dir):
             os.rmdir(self.temp_dir)
 
-    @patch('md_tangle.save.get_input')
-    @patch('os.path.isfile')
-    @patch('md_tangle.save.os.makedirs') # Mock this to prevent actual directory creation outside of setUp
+    @patch("md_tangle.save.input")
+    @patch("os.path.isfile")
+    @patch(
+        "md_tangle.save.os.makedirs"
+    )  # Mock this to prevent actual directory creation outside of setUp
     def test_overwrite_yes(self, mock_makedirs, mock_isfile, mock_get_input):
         mock_isfile.return_value = True
-        mock_get_input.return_value = 'y'
+        mock_get_input.return_value = "y"
         code_blocks = {self.temp_file: "new content"}
         save_to_file(code_blocks, force=False)
         with open(self.temp_file, "r") as f:
             self.assertEqual(f.read(), "new content")
-        mock_get_input.assert_called_once_with(f"'{self.temp_file}' already exists. Overwrite? (Y/n) ")
+        mock_get_input.assert_called_once_with(
+            f"'{self.temp_file}' already exists. Overwrite? (Y/n) "
+        )
 
-    @patch('md_tangle.save.get_input')
-    @patch('os.path.isfile')
-    @patch('md_tangle.save.os.makedirs')
+    @patch("md_tangle.save.input")
+    @patch("os.path.isfile")
+    @patch("md_tangle.save.os.makedirs")
     def test_overwrite_no(self, mock_makedirs, mock_isfile, mock_get_input):
         mock_isfile.return_value = True
-        mock_get_input.return_value = 'n'
+        mock_get_input.return_value = "n"
         code_blocks = {self.temp_file: "new content"}
         save_to_file(code_blocks, force=False)
         with open(self.temp_file, "r") as f:
-            self.assertEqual(f.read(), "initial content") # Should not be overwritten
-        mock_get_input.assert_called_once_with(f"'{self.temp_file}' already exists. Overwrite? (Y/n) ")
+            self.assertEqual(f.read(), "initial content")  # Should not be overwritten
+        mock_get_input.assert_called_once_with(
+            f"'{self.temp_file}' already exists. Overwrite? (Y/n) "
+        )
 
-    @patch('md_tangle.save.os.makedirs')
+    @patch("md_tangle.save.os.makedirs")
     def test_force_overwrite(self, mock_makedirs):
         # file exists, but force=True should ignore it
         code_blocks = {self.temp_file: "forced content"}
@@ -87,7 +93,7 @@ class SaveToFileTest(unittest.TestCase):
         with open(self.temp_file, "r") as f:
             self.assertEqual(f.read(), "forced content")
 
-    @patch('md_tangle.save.os.makedirs')
+    @patch("md_tangle.save.os.makedirs")
     def test_new_file_creation(self, mock_makedirs):
         new_file = os.path.join(self.temp_dir, "new_file.txt")
         code_blocks = {new_file: "new file content"}
@@ -97,8 +103,8 @@ class SaveToFileTest(unittest.TestCase):
         # Clean up the newly created file
         os.remove(new_file)
 
-    @patch('md_tangle.save.print') # Mock print to capture verbose output
-    @patch('md_tangle.save.os.makedirs')
+    @patch("md_tangle.save.print")  # Mock print to capture verbose output
+    @patch("md_tangle.save.os.makedirs")
     def test_verbose_output(self, mock_makedirs, mock_print):
         code_blocks = {self.temp_file: "content\nwith\nlines"}
         save_to_file(code_blocks, verbose=True, force=True)
@@ -106,4 +112,3 @@ class SaveToFileTest(unittest.TestCase):
         # Check that the call includes the filename and line count
         expected_call_part = f"{self.temp_file}           3 lines"
         self.assertIn(expected_call_part, mock_print.call_args[0][0])
-

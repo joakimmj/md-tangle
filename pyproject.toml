@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "md-tangle"
+version = "1.4.4"
+authors = [
+  { name="Joakim Myrvoll Johansen", email="joakimmyrvoll@gmail.com" },
+]
+description = "Generates ('tangles') source code from Markdown documents"
+readme = "README.md"
+requires-python = ">=3.8"
+keywords = ["markdown", "tangle", "literate programming"]
+license = { text = "MIT" }
+classifiers = [
+    "Environment :: Console",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Natural Language :: English",
+    'Topic :: Text Processing :: Markup',
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+]
+urls = { "Homepage" = "https://github.com/joakimmj/md-tangle" }
+
+[project.scripts]
+md-tangle = "md_tangle.main:main"
+
+[project.optional-dependencies]
+dev = [
+    "black",
+    "flake8",
+    "mypy",
+]
