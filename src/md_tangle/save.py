@@ -27,9 +27,12 @@ def override_output_dest(code_blocks, output_dest):
     return blocks
 
 
-def save_to_file(code_blocks, verbose=False, force=False):
-    for path, value in code_blocks.items():
+def save_to_file(file_code_blocks, verbose=False, force=False, block_padding=0):
+    for path, code_blocks in file_code_blocks.items():
         path = os.path.expanduser(path)
+
+        block_separator = "\n" * block_padding
+        value = block_separator.join(code_blocks)
 
         __create_dir(path)
 

@@ -32,6 +32,14 @@ def __get_args():
         help="separator for tangle destinations/tags (default=',')",
         default=",",
     )
+    parser.add_argument(
+        "-p",
+        "--block-padding",
+        type=int,
+        default=0,
+        metavar="N",
+        help="add N newlines between code blocks when writing to file (default: 0)",
+    )
     return parser.parse_args()
 
 
@@ -57,7 +65,7 @@ def main():
     if args.destination is not None:
         blocks = override_output_dest(blocks, args.destination)
 
-    save_to_file(blocks, args.verbose, args.force)
+    save_to_file(blocks, args.verbose, args.force, args.block_padding)
 
 
 if __name__ == "__main__":

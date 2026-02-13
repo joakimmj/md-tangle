@@ -53,6 +53,7 @@ in the resulting files if not included with the `-i`/`--include` flag.
 * `-d`/`--destination`: Overwrite output destination
 * `-i`/`--include`: Include tagged code blocks (separator=',')
 * `-s`/`--separator`: Separator for tangle destinations (default=',')
+* `-p`/`--block-padding`: Add N newlines between code blocks when writing to file (default=0)
 
 ## Usage
 

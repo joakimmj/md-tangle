@@ -8,7 +8,7 @@ This is done for clarity, robustness, and compatibility with the Python ecosyste
 
 ### \_\_init__.py
 ```python tangle:src/md_tangle/__init__.py
-
+# Marking directory as package
 ```
 
 ### \_\_main__.py
@@ -59,6 +59,14 @@ def __get_args():
         help="separator for tangle destinations/tags (default=',')",
         default=",",
     )
+    parser.add_argument(
+        "-p",
+        "--block-padding",
+        type=int,
+        default=0,
+        metavar="N",
+        help="add N newlines between code blocks when writing to file (default: 0)",
+    )
     return parser.parse_args()
 ```
 
@@ -86,7 +94,7 @@ def main():
     if args.destination is not None:
         blocks = override_output_dest(blocks, args.destination)
 
-    save_to_file(blocks, args.verbose, args.force)
+    save_to_file(blocks, args.verbose, args.force, args.block_padding)
 
 
 if __name__ == "__main__":
@@ -181,16 +189,21 @@ These functions simply add the lines in the code blocks to it's destinations. Th
 data model is:
 ```python
 code_blocks = {
-    "path/filename": "text from code block",
-    "path/filename2": "text from code block",
+    "path/filename": ["text from code block 1", "text from code block 2"],
+    "path/filename2": ["text from code block"],
 }
 ```
 
 __implementation__
 ```python tangle:src/md_tangle/tangle.py
-def __add_to_code_blocks(code_blocks, options, line):
-    for location in options.get("locations"):
-        code_blocks[location] = code_blocks.get(location, "") + line
+def __add_codeblock(code_blocks, options, current_block):
+    if options is None or not current_block:
+        return
+
+    for location in options.get("locations", []):
+        location_blocks = code_blocks.get(location, [])
+        location_blocks.append(current_block)
+        code_blocks[location] = location_blocks
 ```
 
 Add code blocks if has `tangle` location and include tags provided when running
@@ -201,12 +214,17 @@ def map_md_to_code_blocks(filename, separator, tags_to_include):
     lines = md_file.readlines()
     options = None
     code_blocks = {}
+    current_block = ""
 
     for line in lines:
         if __contains_code_block_separators(line):
+            __add_codeblock(code_blocks, options, current_block)
+            current_block = ""
             options = __get_tangle_options(line, separator)
         elif options is not None and __should_include_block(tags_to_include, options):
-            __add_to_code_blocks(code_blocks, options, line)
+            current_block = current_block + line
+
+    __add_codeblock(code_blocks, options, current_block)
 
     md_file.close()
     return code_blocks
@@ -255,16 +273,18 @@ def override_output_dest(code_blocks, output_dest):
         blocks[new_dir + "/" + filename] = code_blocks[path]
 
     return blocks
-
 ```
 
 ### Saving to file
 This function writes the code blocks to it's destinations.
 
 ```python tangle:src/md_tangle/save.py
-def save_to_file(code_blocks, verbose=False, force=False):
-    for path, value in code_blocks.items():
+def save_to_file(file_code_blocks, verbose=False, force=False, block_padding=0):
+    for path, code_blocks in file_code_blocks.items():
         path = os.path.expanduser(path)
+
+        block_separator = "\n" * block_padding
+        value = block_separator.join(code_blocks)
 
         __create_dir(path)
 
@@ -281,5 +301,4 @@ def save_to_file(code_blocks, verbose=False, force=False):
 
         if verbose:
             print("{0: <50} {1} lines".format(path, len(value.splitlines())))
-
 ```

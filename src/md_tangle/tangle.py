@@ -1,6 +1,7 @@
 import re
 from io import open
 
+
 TANGLE_KEYWORD = "tangle:"
 TAGS_KEYWORD = "tags:"
 BLOCK_REGEX = "~{4}|`{3}"
@@ -55,9 +56,14 @@ def __should_include_block(tags_to_include, options):
     return False
 
 
-def __add_to_code_blocks(code_blocks, options, line):
-    for location in options.get("locations"):
-        code_blocks[location] = code_blocks.get(location, "") + line
+def __add_codeblock(code_blocks, options, current_block):
+    if options is None or not current_block:
+        return
+
+    for location in options.get("locations", []):
+        location_blocks = code_blocks.get(location, [])
+        location_blocks.append(current_block)
+        code_blocks[location] = location_blocks
 
 
 def map_md_to_code_blocks(filename, separator, tags_to_include):
@@ -65,12 +71,17 @@ def map_md_to_code_blocks(filename, separator, tags_to_include):
     lines = md_file.readlines()
     options = None
     code_blocks = {}
+    current_block = ""
 
     for line in lines:
         if __contains_code_block_separators(line):
+            __add_codeblock(code_blocks, options, current_block)
+            current_block = ""
             options = __get_tangle_options(line, separator)
         elif options is not None and __should_include_block(tags_to_include, options):
-            __add_to_code_blocks(code_blocks, options, line)
+            current_block = current_block + line
+
+    __add_codeblock(code_blocks, options, current_block)
 
     md_file.close()
     return code_blocks
