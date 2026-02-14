@@ -3,6 +3,26 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-02-14
+
+> [!WARNING]
+> **BREAKING CHANGE**: dropping support for Python 2
+
+### Added
+
+- `feature`: add tags for filtering
+  - This will allow code blocks to be omitted if not included by using the `-i`/`--include` flag.
+- `feature`: add `-p`/`--block-padding` flag
+  - This flag allows for adding padding between code blocks when tangled.
+
+### Changed
+
+- `refactor!`: `src-layout` and `pyproject.toml`
+  - Update the project structure to `src-latout`
+  - Switch from `setup.py` to `pyproject.toml`
+  - Added `Makefile` to handle different operations
+  - Added linting and typecheck
+
 ## [1.4.4] - 2025-02-12
 ### Changed
 - Fix: allow for creating nested folders
@@ -55,7 +75,8 @@ All notable changes to this project will be documented in this file.
 - First version pushed to [PyPI].
 
 
-[Unreleased]: https://github.com/joakimmj/md-tangle/compare/v1.4.4...HEAD
+[Unreleased]: https://github.com/joakimmj/md-tangle/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/joakimmj/md-tangle/compare/v1.4.4...v2.0.0
 [1.4.4]: https://github.com/joakimmj/md-tangle/compare/v1.4.3...v1.4.4
 [1.4.3]: https://github.com/joakimmj/md-tangle/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/joakimmj/md-tangle/compare/v1.4.1...v1.4.2
