@@ -21,18 +21,25 @@ main.main()
 
 __Imports__
 ```python tangle:src/md_tangle/main.py
+from __future__ import annotations
+
 import argparse
 import sys
 from importlib import metadata
+from typing import TYPE_CHECKING
+
 from md_tangle.save import override_output_dest, save_to_file
 from md_tangle.tangle import map_md_to_code_blocks
+
+if TYPE_CHECKING:
+    from argparse import Namespace
 ```
 
 ### Argument parsing
 Setup for all arguments
 
 ```python tangle:src/md_tangle/main.py
-def __get_args():
+def __get_args() -> Namespace:
     parser = argparse.ArgumentParser(
         description="Tangle code blocks from Markdown file."
     )
@@ -72,7 +79,7 @@ def __get_args():
 
 ### main.py
 ```python tangle:src/md_tangle/main.py
-def main():
+def main() -> None:
     """Main program entry point"""
     args = __get_args()
 
@@ -84,8 +91,10 @@ def main():
         sys.stderr.write("The 'filename' argument is required.\n")
         sys.exit(1)
 
-    tags_to_include = args.include.split(",") if args.include else []
-    blocks = map_md_to_code_blocks(args.filename, args.separator, tags_to_include)
+    tags_to_include: list[str] = args.include.split(",") if args.include else []
+    blocks: dict[str, list[str]] = map_md_to_code_blocks(
+        args.filename, args.separator, tags_to_include
+    )
 
     if not blocks:
         print("Found no blocks to tangle.")
@@ -105,8 +114,14 @@ if __name__ == "__main__":
 
 __Imports__
 ```python tangle:src/md_tangle/tangle.py
+from __future__ import annotations
+
 import re
 from io import open
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from io import TextIOWrapper
 ```
 
 ### Regex to fetch the keywords
@@ -124,13 +139,13 @@ This function check if the line starts with one of the code block separators, an
 it checks that it is only one on that line. So ```this``` is not read as a code block.
 
 ```python tangle:src/md_tangle/tangle.py
-def __contains_code_block_separators(line):
+def __contains_code_block_separators(line: str) -> bool:
     line = line.lstrip(" ")
-    tangle = re.search(BLOCK_REGEX_START, line)
-    starts_with_separator = tangle is not None
+    tangle_match = re.search(BLOCK_REGEX_START, line)
+    starts_with_separator = tangle_match is not None
 
-    tangle = re.findall(BLOCK_REGEX, line)
-    only_one_separator = len(tangle) == 1
+    tangle_list = re.findall(BLOCK_REGEX, line)
+    only_one_separator = len(tangle_list) == 1
 
     return starts_with_separator and only_one_separator
 ```
@@ -140,7 +155,7 @@ This function will try to extract the tangle options.
 
 Extract options after keyword
 ```python tangle:src/md_tangle/tangle.py
-def __get_cmd_options(line, keyword, separator):
+def __get_cmd_options(line: str, keyword: str, separator: str) -> list[str] | None:
     command = re.search(keyword + "+([^\\s]+)", line)
 
     if command is None:
@@ -157,7 +172,7 @@ def __get_cmd_options(line, keyword, separator):
 
 Return options if `tangle` keyword exists
 ```python tangle:src/md_tangle/tangle.py
-def __get_tangle_options(line, separator):
+def __get_tangle_options(line: str, separator: str) -> dict[str, list[str]] | None:
     locations = __get_cmd_options(line, TANGLE_KEYWORD, separator)
 
     if locations is None:
@@ -172,7 +187,9 @@ If the code block is tagged, at least one of the tags should be included as
 with the `-i`/`--include` argument.
 
 ```python tangle:src/md_tangle/tangle.py
-def __should_include_block(tags_to_include, options):
+def __should_include_block(
+    tags_to_include: list[str], options: dict[str, list[str]]
+) -> bool:
     tags = options.get("tags")
 
     if not tags:
@@ -196,7 +213,11 @@ code_blocks = {
 
 __implementation__
 ```python tangle:src/md_tangle/tangle.py
-def __add_codeblock(code_blocks, options, current_block):
+def __add_codeblock(
+    code_blocks: dict[str, list[str]],
+    options: dict[str, list[str]] | None,
+    current_block: str,
+) -> None:
     if options is None or not current_block:
         return
 
@@ -209,11 +230,13 @@ def __add_codeblock(code_blocks, options, current_block):
 Add code blocks if has `tangle` location and include tags provided when running
 the `md-tangle` command.
 ```python tangle:src/md_tangle/tangle.py
-def map_md_to_code_blocks(filename, separator, tags_to_include):
-    md_file = open(filename, "r", encoding="utf8")
-    lines = md_file.readlines()
-    options = None
-    code_blocks = {}
+def map_md_to_code_blocks(
+    filename: str, separator: str, tags_to_include: list[str]
+) -> dict[str, list[str]]:
+    md_file: TextIOWrapper = open(filename, "r", encoding="utf8")
+    lines: list[str] = md_file.readlines()
+    options: dict[str, list[str]] | None = None
+    code_blocks: dict[str, list[str]] = {}
     current_block = ""
 
     for line in lines:
@@ -238,15 +261,21 @@ __Imports__
 `pathlib`/`pathlib2` (backport for Python 2).
 
 ```python tangle:src/md_tangle/save.py
+from __future__ import annotations
+
 import os
 from io import open
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from io import TextIOWrapper
 ```
 
 ### Create directory
 Creates directory if not existing
 
 ```python tangle:src/md_tangle/save.py
-def __create_dir(path):
+def __create_dir(path: str) -> None:
     dir_name = os.path.dirname(path)
 
     if dir_name != "":
@@ -257,14 +286,17 @@ def __create_dir(path):
 This function changes save path to be the overridden path.
 
 ```python tangle:src/md_tangle/save.py
-def override_output_dest(code_blocks, output_dest):
-    blocks = {}
-    common = os.path.commonpath(code_blocks.keys())
+def override_output_dest(
+    code_blocks: dict[str, list[str]], output_dest: str
+) -> dict[str, list[str]]:
+    blocks: dict[str, list[str]] = {}
+    common: str = os.path.commonpath(code_blocks.keys())
 
     for path in code_blocks.keys():
-        filename = os.path.basename(path)
-        dir = os.path.dirname(path)
+        filename: str = os.path.basename(path)
+        dir: str = os.path.dirname(path)
 
+        new_dir: str
         if common == "" or common == path:
             new_dir = output_dest
         else:
@@ -279,25 +311,30 @@ def override_output_dest(code_blocks, output_dest):
 This function writes the code blocks to it's destinations.
 
 ```python tangle:src/md_tangle/save.py
-def save_to_file(file_code_blocks, verbose=False, force=False, block_padding=0):
+def save_to_file(
+    file_code_blocks: dict[str, list[str]],
+    verbose: bool = False,
+    force: bool = False,
+    block_padding: int = 0,
+) -> None:
     for path, code_blocks in file_code_blocks.items():
         path = os.path.expanduser(path)
 
-        block_separator = "\n" * block_padding
-        value = block_separator.join(code_blocks)
+        block_separator: str = "\n" * block_padding
+        value: str = block_separator.join(code_blocks)
 
         __create_dir(path)
 
         if os.path.isfile(path) and not force:
-            overwrite = input(
+            overwrite: str = input(
                 "'{0}' already exists. Overwrite? (Y/n) ".format(path)
             )
             if overwrite != "" and overwrite.lower() != "y":
                 continue
 
-        with open(path, "w", encoding="utf8") as f:
+        f: TextIOWrapper = open(path, "w", encoding="utf8")
+        with f:
             f.write(value)
-            f.close()
 
         if verbose:
             print("{0: <50} {1} lines".format(path, len(value.splitlines())))

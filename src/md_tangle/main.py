@@ -1,11 +1,18 @@
+from __future__ import annotations
+
 import argparse
 import sys
 from importlib import metadata
+from typing import TYPE_CHECKING
+
 from md_tangle.save import override_output_dest, save_to_file
 from md_tangle.tangle import map_md_to_code_blocks
 
+if TYPE_CHECKING:
+    from argparse import Namespace
 
-def __get_args():
+
+def __get_args() -> Namespace:
     parser = argparse.ArgumentParser(
         description="Tangle code blocks from Markdown file."
     )
@@ -43,7 +50,7 @@ def __get_args():
     return parser.parse_args()
 
 
-def main():
+def main() -> None:
     """Main program entry point"""
     args = __get_args()
 
@@ -55,8 +62,10 @@ def main():
         sys.stderr.write("The 'filename' argument is required.\n")
         sys.exit(1)
 
-    tags_to_include = args.include.split(",") if args.include else []
-    blocks = map_md_to_code_blocks(args.filename, args.separator, tags_to_include)
+    tags_to_include: list[str] = args.include.split(",") if args.include else []
+    blocks: dict[str, list[str]] = map_md_to_code_blocks(
+        args.filename, args.separator, tags_to_include
+    )
 
     if not blocks:
         print("Found no blocks to tangle.")

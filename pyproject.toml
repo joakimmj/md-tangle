@@ -10,7 +10,7 @@ authors = [
 ]
 description = "Generates ('tangles') source code from Markdown documents"
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.10"
 keywords = ["markdown", "tangle", "literate programming"]
 license = { text = "MIT" }
 classifiers = [
