@@ -233,10 +233,6 @@ def map_md_to_code_blocks(filename, separator, tags_to_include):
 ## Saving
 
 __Imports__
-
-`os.makedirs` does not support creating paths if they already exists in Python 2. So we need use `Path` from
-`pathlib`/`pathlib2` (backport for Python 2).
-
 ```python tangle:src/md_tangle/save.py
 import os
 from io import open
