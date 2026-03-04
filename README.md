@@ -30,6 +30,9 @@ For local development, you can install it in editable mode:
 pip install -e .
 ```
 
+> [!TIP]
+> Also exists as Neovim plugin, see [md-tangle.nvim](https://github.com/joakimmj/md-tangle.nvim).
+
 ## Command
 By adding the keyword `tangle:<path/filename>`, this tool will tangle tagged code
 blocks to given file. Supports `~` for home directory.
