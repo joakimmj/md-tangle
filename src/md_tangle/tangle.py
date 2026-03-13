@@ -44,29 +44,20 @@ def __get_tangle_options(line, separator):
     return {"locations": locations, "tags": tags or []}
 
 
-def __should_include_block(tags_to_include, options):
-    tags = options.get("tags")
-
-    if not tags:
-        return True
-
-    if any(tag in tags for tag in tags_to_include):
-        return True
-
-    return False
-
-
 def __add_codeblock(code_blocks, options, current_block):
     if options is None or not current_block:
         return
 
     for location in options.get("locations", []):
         location_blocks = code_blocks.get(location, [])
-        location_blocks.append(current_block)
+        location_blocks.append({
+            "block": current_block,
+            "tags": options.get("tags", [])
+        })
         code_blocks[location] = location_blocks
 
 
-def map_md_to_code_blocks(filename, separator, tags_to_include):
+def get_tangle_sources(filename, separator):
     md_file = open(filename, "r", encoding="utf8")
     lines = md_file.readlines()
     options = None
@@ -78,7 +69,7 @@ def map_md_to_code_blocks(filename, separator, tags_to_include):
             __add_codeblock(code_blocks, options, current_block)
             current_block = ""
             options = __get_tangle_options(line, separator)
-        elif options is not None and __should_include_block(tags_to_include, options):
+        elif options is not None:
             current_block = current_block + line
 
     __add_codeblock(code_blocks, options, current_block)

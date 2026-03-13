@@ -24,8 +24,9 @@ __Imports__
 import argparse
 import sys
 from importlib import metadata
-from md_tangle.save import override_output_dest, save_to_file
-from md_tangle.tangle import map_md_to_code_blocks
+from md_tangle.data_processor import override_output_dest, transform_file_data
+from md_tangle.save import save_to_file
+from md_tangle.tangle import get_tangle_sources
 ```
 
 ### Argument parsing
@@ -84,17 +85,19 @@ def main():
         sys.stderr.write("The 'filename' argument is required.\n")
         sys.exit(1)
 
-    tags_to_include = args.include.split(",") if args.include else []
-    blocks = map_md_to_code_blocks(args.filename, args.separator, tags_to_include)
+    tangle_sources = get_tangle_sources(args.filename, args.separator)
 
-    if not blocks:
+    tags_to_include = args.include.split(",") if args.include else []
+    file_data = transform_file_data(tangle_sources, tags_to_include, args.block_padding)
+
+    if not file_data:
         print("Found no blocks to tangle.")
         return
 
     if args.destination is not None:
-        blocks = override_output_dest(blocks, args.destination)
+        file_data = override_output_dest(file_data, args.destination)
 
-    save_to_file(blocks, args.verbose, args.force, args.block_padding)
+    save_to_file(file_data, args.verbose, args.force)
 
 
 if __name__ == "__main__":
@@ -167,30 +170,13 @@ def __get_tangle_options(line, separator):
     return {"locations": locations, "tags": tags or []}
 ```
 
-### Check if codeblock should be included
-If the code block is tagged, at least one of the tags should be included as
-with the `-i`/`--include` argument.
-
-```python tangle:src/md_tangle/tangle.py
-def __should_include_block(tags_to_include, options):
-    tags = options.get("tags")
-
-    if not tags:
-        return True
-
-    if any(tag in tags for tag in tags_to_include):
-        return True
-
-    return False
-```
-
 ### Map Markdown to code blocks
 These functions simply add the lines in the code blocks to it's destinations. The format on this
 data model is:
 ```python
 code_blocks = {
-    "path/filename": ["text from code block 1", "text from code block 2"],
-    "path/filename2": ["text from code block"],
+    "path/filename": [{"block": "text from code block 1", "tags": []}, {"block": "text from code block 2", "tags": []}],
+    "path/filename2": [{"block": "text from code block", "tags": []}],
 }
 ```
 
@@ -202,14 +188,17 @@ def __add_codeblock(code_blocks, options, current_block):
 
     for location in options.get("locations", []):
         location_blocks = code_blocks.get(location, [])
-        location_blocks.append(current_block)
+        location_blocks.append({
+            "block": current_block,
+            "tags": options.get("tags", [])
+        })
         code_blocks[location] = location_blocks
 ```
 
 Add code blocks if has `tangle` location and include tags provided when running
 the `md-tangle` command.
 ```python tangle:src/md_tangle/tangle.py
-def map_md_to_code_blocks(filename, separator, tags_to_include):
+def get_tangle_sources(filename, separator):
     md_file = open(filename, "r", encoding="utf8")
     lines = md_file.readlines()
     options = None
@@ -221,13 +210,78 @@ def map_md_to_code_blocks(filename, separator, tags_to_include):
             __add_codeblock(code_blocks, options, current_block)
             current_block = ""
             options = __get_tangle_options(line, separator)
-        elif options is not None and __should_include_block(tags_to_include, options):
+        elif options is not None:
             current_block = current_block + line
 
     __add_codeblock(code_blocks, options, current_block)
 
     md_file.close()
     return code_blocks
+```
+
+## Data Processing
+
+__Imports__
+```python tangle:src/md_tangle/data_processor.py
+import os
+```
+
+### Check if codeblock should be included
+If the code block is tagged, at least one of the tags should be included as
+with the `-i`/`--include` argument.
+
+```python tangle:src/md_tangle/data_processor.py
+def __should_include_block(tags_to_include, tags):
+    if not tags:
+        return True
+
+    if any(tag in tags for tag in tags_to_include):
+        return True
+
+    return False
+```
+
+### Transform file data
+
+Transform the raw tangle sources to the file body.
+
+```python tangle:src/md_tangle/data_processor.py
+def transform_file_data(tangle_sources, tags_to_include, block_padding=0):
+    file_data = {}
+
+    for path, code_blocks in tangle_sources.items():
+        blocks_to_show = []
+
+        for code_block in code_blocks:
+            if __should_include_block(tags_to_include, code_block.get("tags", [])):
+                blocks_to_show.append(code_block.get("block", ""))
+
+        block_separator = "\n" * block_padding
+        file_data[path] = block_separator.join(blocks_to_show)
+
+    return file_data
+```
+
+### Override output destination
+This function changes save path to be the overridden path.
+
+```python tangle:src/md_tangle/data_processor.py
+def override_output_dest(file_data, output_dest):
+    blocks = {}
+    common = os.path.commonpath(file_data.keys())
+
+    for path in file_data.keys():
+        filename = os.path.basename(path)
+        dir = os.path.dirname(path)
+
+        if common == "" or common == path:
+            new_dir = output_dest
+        else:
+            new_dir = dir.replace(common, output_dest)
+
+        blocks[new_dir + "/" + filename] = file_data[path]
+
+    return blocks
 ```
 
 ## Saving
@@ -249,38 +303,13 @@ def __create_dir(path):
         os.makedirs(dir_name, exist_ok=True)
 ```
 
-### Override output destination
-This function changes save path to be the overridden path.
-
-```python tangle:src/md_tangle/save.py
-def override_output_dest(code_blocks, output_dest):
-    blocks = {}
-    common = os.path.commonpath(code_blocks.keys())
-
-    for path in code_blocks.keys():
-        filename = os.path.basename(path)
-        dir = os.path.dirname(path)
-
-        if common == "" or common == path:
-            new_dir = output_dest
-        else:
-            new_dir = dir.replace(common, output_dest)
-
-        blocks[new_dir + "/" + filename] = code_blocks[path]
-
-    return blocks
-```
-
 ### Saving to file
 This function writes the code blocks to it's destinations.
 
 ```python tangle:src/md_tangle/save.py
-def save_to_file(file_code_blocks, verbose=False, force=False, block_padding=0):
-    for path, code_blocks in file_code_blocks.items():
+def save_to_file(file_data, verbose=False, force=False):
+    for path, file_body in file_data.items():
         path = os.path.expanduser(path)
-
-        block_separator = "\n" * block_padding
-        value = block_separator.join(code_blocks)
 
         __create_dir(path)
 
@@ -292,9 +321,9 @@ def save_to_file(file_code_blocks, verbose=False, force=False, block_padding=0):
                 continue
 
         with open(path, "w", encoding="utf8") as f:
-            f.write(value)
+            f.write(file_body)
             f.close()
 
         if verbose:
-            print("{0: <50} {1} lines".format(path, len(value.splitlines())))
+            print("{0: <50} {1} lines".format(path, len(file_body.splitlines())))
 ```

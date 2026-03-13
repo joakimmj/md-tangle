@@ -1,8 +1,9 @@
 import argparse
 import sys
 from importlib import metadata
-from md_tangle.save import override_output_dest, save_to_file
-from md_tangle.tangle import map_md_to_code_blocks
+from md_tangle.data_processor import override_output_dest, transform_file_data
+from md_tangle.save import save_to_file
+from md_tangle.tangle import get_tangle_sources
 
 
 def __get_args():
@@ -55,17 +56,19 @@ def main():
         sys.stderr.write("The 'filename' argument is required.\n")
         sys.exit(1)
 
-    tags_to_include = args.include.split(",") if args.include else []
-    blocks = map_md_to_code_blocks(args.filename, args.separator, tags_to_include)
+    tangle_sources = get_tangle_sources(args.filename, args.separator)
 
-    if not blocks:
+    tags_to_include = args.include.split(",") if args.include else []
+    file_data = transform_file_data(tangle_sources, tags_to_include, args.block_padding)
+
+    if not file_data:
         print("Found no blocks to tangle.")
         return
 
     if args.destination is not None:
-        blocks = override_output_dest(blocks, args.destination)
+        file_data = override_output_dest(file_data, args.destination)
 
-    save_to_file(blocks, args.verbose, args.force, args.block_padding)
+    save_to_file(file_data, args.verbose, args.force)
 
 
 if __name__ == "__main__":

@@ -9,30 +9,9 @@ def __create_dir(path):
         os.makedirs(dir_name, exist_ok=True)
 
 
-def override_output_dest(code_blocks, output_dest):
-    blocks = {}
-    common = os.path.commonpath(code_blocks.keys())
-
-    for path in code_blocks.keys():
-        filename = os.path.basename(path)
-        dir = os.path.dirname(path)
-
-        if common == "" or common == path:
-            new_dir = output_dest
-        else:
-            new_dir = dir.replace(common, output_dest)
-
-        blocks[new_dir + "/" + filename] = code_blocks[path]
-
-    return blocks
-
-
-def save_to_file(file_code_blocks, verbose=False, force=False, block_padding=0):
-    for path, code_blocks in file_code_blocks.items():
+def save_to_file(file_data, verbose=False, force=False):
+    for path, file_body in file_data.items():
         path = os.path.expanduser(path)
-
-        block_separator = "\n" * block_padding
-        value = block_separator.join(code_blocks)
 
         __create_dir(path)
 
@@ -44,8 +23,8 @@ def save_to_file(file_code_blocks, verbose=False, force=False, block_padding=0):
                 continue
 
         with open(path, "w", encoding="utf8") as f:
-            f.write(value)
+            f.write(file_body)
             f.close()
 
         if verbose:
-            print("{0: <50} {1} lines".format(path, len(value.splitlines())))
+            print("{0: <50} {1} lines".format(path, len(file_body.splitlines())))
