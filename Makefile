@@ -1,4 +1,4 @@
-.PHONY: test build clean upload-test upload install-build-deps install-upload-deps install-dev-deps install-test-deps format lint typecheck generate-from-docs install-setuptools
+.PHONY: test build clean upload-test upload install-build-deps install-upload-deps install-dev-deps install-test-deps format lint typecheck generate-from-docs install-setuptools run-test
 
 VENV_PYTHON := ./.venv/bin/python
 VENV_PIP := ./.venv/bin/pip
@@ -23,9 +23,11 @@ install-dev-deps: check_venv install-setuptools
 install-test-deps: check_venv install-setuptools install-dev-deps
 	$(VENV_PIP) install black flake8 mypy # Explicitly install test dependencies
 
-test: check_venv install-test-deps lint typecheck
+run-test:
 	rm -rf tests/output
 	PYTHONPATH=src $(VENV_PYTHON) -m unittest discover -s tests/ -p '*_test.py'
+
+test: check_venv install-test-deps lint typecheck run-test
 	git diff --exit-code tests/output
 
 format: check_venv install-test-deps
