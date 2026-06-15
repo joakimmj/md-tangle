@@ -1,7 +1,9 @@
-.PHONY: test build clean upload-test upload install-build-deps install-upload-deps install-dev-deps install-test-deps format lint typecheck generate-from-docs install-setuptools run-test
+.PHONY: test build clean upload-test upload install-build-deps install-upload-deps install-dev-deps install-test-deps format lint typecheck generate-from-docs install-setuptools run-test all
 
 VENV_PYTHON := ./.venv/bin/python
 VENV_PIP := ./.venv/bin/pip
+
+all: generate-from-docs test
 
 # Ensure the virtual environment is set up and activated for commands
 # This ensures that all commands use the python and pip from the venv
