@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-06-15
+
+- feat: add feature for copying files
+- fix: do not save empty file
+- refactor: move data processing to own file
+
 ## [2.0.0] - 2026-02-14
 
 > [!WARNING]
@@ -75,7 +81,8 @@ All notable changes to this project will be documented in this file.
 - First version pushed to [PyPI].
 
 
-[Unreleased]: https://github.com/joakimmj/md-tangle/compare/v2.0.0...HEAD
+[Unreleased]: https://github.com/joakimmj/md-tangle/compare/v2.1.0...HEAD
+[2.1.0]: https://github.com/joakimmj/md-tangle/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/joakimmj/md-tangle/compare/v1.4.4...v2.0.0
 [1.4.4]: https://github.com/joakimmj/md-tangle/compare/v1.4.3...v1.4.4
 [1.4.3]: https://github.com/joakimmj/md-tangle/compare/v1.4.2...v1.4.3
