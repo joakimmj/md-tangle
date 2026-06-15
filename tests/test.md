@@ -124,3 +124,9 @@ return config
 ```lua tangle:tests/output/basic/hello_world1.lua,tests/output/basic/hello_world2.lua
 print("Hello, World")
 ```
+
+### All code blocks tagged
+
+```lua tangle:tests/output/basic/hello_world3.lua tags:wsl
+print("Tagged file")
+```

@@ -309,6 +309,9 @@ This function writes the code blocks to it's destinations.
 ```python tangle:src/md_tangle/save.py
 def save_to_file(file_data, verbose=False, force=False):
     for path, file_body in file_data.items():
+        if not file_body or file_body is None:
+            continue
+
         path = os.path.expanduser(path)
 
         __create_dir(path)

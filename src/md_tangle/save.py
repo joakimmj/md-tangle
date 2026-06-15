@@ -11,6 +11,9 @@ def __create_dir(path):
 
 def save_to_file(file_data, verbose=False, force=False):
     for path, file_body in file_data.items():
+        if not file_body or file_body is None:
+            continue
+
         path = os.path.expanduser(path)
 
         __create_dir(path)

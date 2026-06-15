@@ -24,6 +24,7 @@ class TangleTest(unittest.TestCase):
         self.assertTrue(os.path.exists(output_file))
         self.assertTrue(os.path.exists("tests/output/basic/hello_world1.lua"))
         self.assertTrue(os.path.exists("tests/output/basic/hello_world2.lua"))
+        self.assertFalse(os.path.exists("tests/output/basic/hello_world3.lua"))
 
         with open(output_file, "r") as f:
             content = f.read()
@@ -54,8 +55,9 @@ class TangleTest(unittest.TestCase):
 
         output_file = os.path.join(output_dir, "wezterm.lua")
         self.assertTrue(os.path.exists(output_file))
-        self.assertTrue(os.path.exists("tests/output/basic/hello_world1.lua"))
-        self.assertTrue(os.path.exists("tests/output/basic/hello_world2.lua"))
+        self.assertTrue(os.path.exists(output_dir + "/hello_world1.lua"))
+        self.assertTrue(os.path.exists(output_dir + "/hello_world2.lua"))
+        self.assertFalse(os.path.exists(output_dir + "/hello_world3.lua"))
 
         with open(output_file, "r") as f:
             content = f.read()
@@ -86,8 +88,9 @@ class TangleTest(unittest.TestCase):
 
         output_file = os.path.join(output_dir, "wezterm.lua")
         self.assertTrue(os.path.exists(output_file))
-        self.assertTrue(os.path.exists("tests/output/basic/hello_world1.lua"))
-        self.assertTrue(os.path.exists("tests/output/basic/hello_world2.lua"))
+        self.assertTrue(os.path.exists(output_dir + "/hello_world1.lua"))
+        self.assertTrue(os.path.exists(output_dir + "/hello_world2.lua"))
+        self.assertTrue(os.path.exists(output_dir + "/hello_world3.lua"))
 
         with open(output_file, "r") as f:
             content = f.read()
