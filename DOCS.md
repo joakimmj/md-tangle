@@ -120,6 +120,7 @@ TANGLE_KEYWORD = "tangle:"
 TAGS_KEYWORD = "tags:"
 BLOCK_REGEX = "~{4}|`{3}"
 BLOCK_REGEX_START = "^(~{4}|`{3})"
+COPY_KEYWORD = "TANGLE_CP:"
 ```
 
 ### Check if line contains code block separators
@@ -170,6 +171,15 @@ def __get_tangle_options(line, separator):
     return {"locations": locations, "tags": tags or []}
 ```
 
+Get copy sources in line if exists
+```python tangle:src/md_tangle/tangle.py
+def __get_copy_source(line, separator):
+    copy_source_list = __get_cmd_options(line, COPY_KEYWORD, separator)
+    if copy_source_list is None:
+        return None
+    return copy_source_list[0]
+```
+
 ### Map Markdown to code blocks
 These functions simply add the lines in the code blocks to it's destinations. The format on this
 data model is:
@@ -182,17 +192,31 @@ code_blocks = {
 
 __implementation__
 ```python tangle:src/md_tangle/tangle.py
-def __add_codeblock(code_blocks, options, current_block):
+def __add_codeblock(sources, options, current_block):
     if options is None or not current_block:
         return
 
     for location in options.get("locations", []):
-        location_blocks = code_blocks.get(location, [])
+        location_blocks = sources.get(location, [])
         location_blocks.append({
             "block": current_block,
             "tags": options.get("tags", [])
         })
-        code_blocks[location] = location_blocks
+        sources[location] = location_blocks
+```
+
+```python tangle:src/md_tangle/tangle.py
+def __add_file_to_copy(sources, options, source_file):
+    if options is None:
+        return
+
+    for location in options.get("locations", []):
+        location_blocks = sources.get(location, [])
+        location_blocks.append({
+            "source": source_file,
+            "tags": options.get("tags", [])
+        })
+        sources[location] = location_blocks
 ```
 
 Add code blocks if has `tangle` location and include tags provided when running
@@ -202,21 +226,25 @@ def get_tangle_sources(filename, separator):
     md_file = open(filename, "r", encoding="utf8")
     lines = md_file.readlines()
     options = None
-    code_blocks = {}
+    sources = {}
     current_block = ""
 
     for line in lines:
+        copy_source = __get_copy_source(line, separator)
         if __contains_code_block_separators(line):
-            __add_codeblock(code_blocks, options, current_block)
+            __add_codeblock(sources, options, current_block)
             current_block = ""
             options = __get_tangle_options(line, separator)
         elif options is not None:
             current_block = current_block + line
+        elif copy_source is not None:
+            copy_options = __get_tangle_options(line, separator)
+            __add_file_to_copy(sources, copy_options, copy_source)
 
-    __add_codeblock(code_blocks, options, current_block)
+    __add_codeblock(sources, options, current_block)
 
     md_file.close()
-    return code_blocks
+    return sources
 ```
 
 ## Data Processing
@@ -231,7 +259,7 @@ If the code block is tagged, at least one of the tags should be included as
 with the `-i`/`--include` argument.
 
 ```python tangle:src/md_tangle/data_processor.py
-def __should_include_block(tags_to_include, tags):
+def __valid_tags(tags_to_include, tags):
     if not tags:
         return True
 
@@ -241,23 +269,55 @@ def __should_include_block(tags_to_include, tags):
     return False
 ```
 
-### Transform file data
+### Transform tangle source
 
 Transform the raw tangle sources to the file body.
+
+```python tangle:src/md_tangle/data_processor.py
+def __transform_tangle_source(tangle_source, tags_to_include, block_padding):
+    blocks_to_show = []
+    files_to_copy = []
+
+    for source in tangle_source:
+        if not __valid_tags(tags_to_include, source.get("tags", [])):
+            continue
+
+        code_block = source.get("block")
+        if code_block is not None:
+            blocks_to_show.append(code_block)
+
+        file_to_copy = source.get("source")
+        if file_to_copy is not None:
+            files_to_copy.append(file_to_copy)
+
+    if blocks_to_show and files_to_copy:
+        print("warning: both tangling and copying to same file. Defaults to tangle")
+
+    if blocks_to_show:
+        block_separator = "\n" * block_padding
+        return {"code_block": block_separator.join(blocks_to_show)}
+
+    if files_to_copy:
+        if len(files_to_copy) > 1:
+            print("multiple files copied to same dest. only copy first")
+
+        return {"source_file": files_to_copy[0]}
+
+    return None
+```
+
+### Transform file data
 
 ```python tangle:src/md_tangle/data_processor.py
 def transform_file_data(tangle_sources, tags_to_include, block_padding=0):
     file_data = {}
 
-    for path, code_blocks in tangle_sources.items():
-        blocks_to_show = []
-
-        for code_block in code_blocks:
-            if __should_include_block(tags_to_include, code_block.get("tags", [])):
-                blocks_to_show.append(code_block.get("block", ""))
-
-        block_separator = "\n" * block_padding
-        file_data[path] = block_separator.join(blocks_to_show)
+    for path, tangle_source in tangle_sources.items():
+        file_data[path] = __transform_tangle_source(
+            tangle_source,
+            tags_to_include,
+            block_padding
+        )
 
     return file_data
 ```
@@ -289,6 +349,7 @@ def override_output_dest(file_data, output_dest):
 __Imports__
 ```python tangle:src/md_tangle/save.py
 import os
+import shutil
 from io import open
 ```
 
@@ -308,8 +369,8 @@ This function writes the code blocks to it's destinations.
 
 ```python tangle:src/md_tangle/save.py
 def save_to_file(file_data, verbose=False, force=False):
-    for path, file_body in file_data.items():
-        if not file_body or file_body is None:
+    for path, data in file_data.items():
+        if data is None:
             continue
 
         path = os.path.expanduser(path)
@@ -323,10 +384,21 @@ def save_to_file(file_data, verbose=False, force=False):
             if overwrite != "" and overwrite.lower() != "y":
                 continue
 
-        with open(path, "w", encoding="utf8") as f:
-            f.write(file_body)
-            f.close()
+        code_block = data.get("code_block")
+        if code_block:
+            with open(path, "w", encoding="utf8") as f:
+                f.write(code_block)
+                f.close()
+            if verbose:
+                print("{0: <50} {1} lines".format(path, len(code_block.splitlines())))
+            continue
 
-        if verbose:
-            print("{0: <50} {1} lines".format(path, len(file_body.splitlines())))
+        source_file = data.get("source_file")
+        if source_file:
+            shutil.copy(source_file, path)
+            if verbose:
+                print(f"Copy {source_file} -> {path}")
+            continue
+
+        print(f"no data found: {data}")
 ```

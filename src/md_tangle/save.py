@@ -1,4 +1,5 @@
 import os
+import shutil
 from io import open
 
 
@@ -10,8 +11,8 @@ def __create_dir(path):
 
 
 def save_to_file(file_data, verbose=False, force=False):
-    for path, file_body in file_data.items():
-        if not file_body or file_body is None:
+    for path, data in file_data.items():
+        if data is None:
             continue
 
         path = os.path.expanduser(path)
@@ -25,9 +26,20 @@ def save_to_file(file_data, verbose=False, force=False):
             if overwrite != "" and overwrite.lower() != "y":
                 continue
 
-        with open(path, "w", encoding="utf8") as f:
-            f.write(file_body)
-            f.close()
+        code_block = data.get("code_block")
+        if code_block:
+            with open(path, "w", encoding="utf8") as f:
+                f.write(code_block)
+                f.close()
+            if verbose:
+                print("{0: <50} {1} lines".format(path, len(code_block.splitlines())))
+            continue
 
-        if verbose:
-            print("{0: <50} {1} lines".format(path, len(file_body.splitlines())))
+        source_file = data.get("source_file")
+        if source_file:
+            shutil.copy(source_file, path)
+            if verbose:
+                print(f"Copy {source_file} -> {path}")
+            continue
+
+        print(f"no data found: {data}")

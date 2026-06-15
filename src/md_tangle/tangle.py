@@ -6,6 +6,7 @@ TANGLE_KEYWORD = "tangle:"
 TAGS_KEYWORD = "tags:"
 BLOCK_REGEX = "~{4}|`{3}"
 BLOCK_REGEX_START = "^(~{4}|`{3})"
+COPY_KEYWORD = "TANGLE_CP:"
 
 
 def __contains_code_block_separators(line):
@@ -44,35 +45,59 @@ def __get_tangle_options(line, separator):
     return {"locations": locations, "tags": tags or []}
 
 
-def __add_codeblock(code_blocks, options, current_block):
+def __get_copy_source(line, separator):
+    copy_source_list = __get_cmd_options(line, COPY_KEYWORD, separator)
+    if copy_source_list is None:
+        return None
+    return copy_source_list[0]
+
+
+def __add_codeblock(sources, options, current_block):
     if options is None or not current_block:
         return
 
     for location in options.get("locations", []):
-        location_blocks = code_blocks.get(location, [])
+        location_blocks = sources.get(location, [])
         location_blocks.append({
             "block": current_block,
             "tags": options.get("tags", [])
         })
-        code_blocks[location] = location_blocks
+        sources[location] = location_blocks
+
+
+def __add_file_to_copy(sources, options, source_file):
+    if options is None:
+        return
+
+    for location in options.get("locations", []):
+        location_blocks = sources.get(location, [])
+        location_blocks.append({
+            "source": source_file,
+            "tags": options.get("tags", [])
+        })
+        sources[location] = location_blocks
 
 
 def get_tangle_sources(filename, separator):
     md_file = open(filename, "r", encoding="utf8")
     lines = md_file.readlines()
     options = None
-    code_blocks = {}
+    sources = {}
     current_block = ""
 
     for line in lines:
+        copy_source = __get_copy_source(line, separator)
         if __contains_code_block_separators(line):
-            __add_codeblock(code_blocks, options, current_block)
+            __add_codeblock(sources, options, current_block)
             current_block = ""
             options = __get_tangle_options(line, separator)
         elif options is not None:
             current_block = current_block + line
+        elif copy_source is not None:
+            copy_options = __get_tangle_options(line, separator)
+            __add_file_to_copy(sources, copy_options, copy_source)
 
-    __add_codeblock(code_blocks, options, current_block)
+    __add_codeblock(sources, options, current_block)
 
     md_file.close()
-    return code_blocks
+    return sources

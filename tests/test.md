@@ -130,3 +130,6 @@ print("Hello, World")
 ```lua tangle:tests/output/basic/hello_world3.lua tags:wsl
 print("Tagged file")
 ```
+
+<!-- TANGLE_CP:tests/test.png tangle:tests/output/basic/simple.png -->
+<!-- TANGLE_CP:tests/test.png tangle:tests/output/basic/tagged.png tags:wsl -->
