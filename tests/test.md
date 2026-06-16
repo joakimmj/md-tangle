@@ -1,13 +1,13 @@
 # WexTerm
 
 Create config
-```lua tangle:tests/output/basic/wezterm.lua
+```lua tangle:output/basic/wezterm.lua
 local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 ```
 
 Set theme
-```lua tangle:tests/output/basic/wezterm.lua tags:styling,theme
+```lua tangle:output/basic/wezterm.lua tags:styling,theme
 config.font = wezterm.font_with_fallback({
     { family = 'JetBrainsMono Nerd Font', weight = 'DemiBold' },
     { family = 'JetBrains Mono', weight = 'DemiBold' },
@@ -45,7 +45,7 @@ config.color_scheme = "redox";
 ```
 
 Window decorations
-```lua tangle:tests/output/basic/wezterm.lua
+```lua tangle:output/basic/wezterm.lua
 config.enable_tab_bar = false
 config.window_decorations = 'RESIZE'
 
@@ -61,7 +61,7 @@ end)
 ```
 
 Keymaps
-```lua tangle:tests/output/basic/wezterm.lua
+```lua tangle:output/basic/wezterm.lua
 config.disable_default_key_bindings = true
 
 local act = wezterm.action
@@ -82,7 +82,7 @@ config.keys = {
 ```
 
 If running WSL i Wezterm, add this:
-```lua tangle:tests/output/basic/wezterm.lua tags:wsl
+```lua tangle:output/basic/wezterm.lua tags:wsl
 config.wsl_domains = {
     {
         name = 'WSL:Ubuntu',
@@ -95,7 +95,7 @@ config.default_domain = 'WSL:Ubuntu'
 ```
 
 Return the final config
-```lua tangle:tests/output/basic/wezterm.lua
+```lua tangle:output/basic/wezterm.lua
 return config
 ```
 
@@ -121,15 +121,15 @@ return config
 
 ### Multiple files
 
-```lua tangle:tests/output/basic/hello_world1.lua,tests/output/basic/hello_world2.lua
+```lua tangle:output/basic/hello_world1.lua,output/basic/hello_world2.lua
 print("Hello, World")
 ```
 
 ### All code blocks tagged
 
-```lua tangle:tests/output/basic/hello_world3.lua tags:wsl
+```lua tangle:output/basic/hello_world3.lua tags:wsl
 print("Tagged file")
 ```
 
-<!-- TANGLE_CP:tests/test.png tangle:tests/output/basic/simple.png -->
-<!-- TANGLE_CP:tests/test.png tangle:tests/output/basic/tagged.png tags:wsl -->
+<!-- TANGLE_CP:./test.png tangle:output/basic/simple.png -->
+<!-- TANGLE_CP:./test.png tangle:output/basic/tagged.png tags:wsl -->

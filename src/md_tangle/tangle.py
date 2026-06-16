@@ -1,5 +1,6 @@
 import re
 from io import open
+from pathlib import Path
 
 
 TANGLE_KEYWORD = "tangle:"
@@ -7,6 +8,18 @@ TAGS_KEYWORD = "tags:"
 BLOCK_REGEX = "~{4}|`{3}"
 BLOCK_REGEX_START = "^(~{4}|`{3})"
 COPY_KEYWORD = "TANGLE_CP:"
+
+
+def __make_absolute(input_path: str, source_file: str) -> str:
+    path = Path(input_path).expanduser()
+    base_path = Path(source_file).resolve().parent
+
+    if path.drive and not path.is_absolute():
+        resolved_path = path.resolve()
+    else:
+        resolved_path = (base_path / path).resolve()
+
+    return str(resolved_path)
 
 
 def __contains_code_block_separators(line):
@@ -52,30 +65,18 @@ def __get_copy_source(line, separator):
     return copy_source_list[0]
 
 
-def __add_codeblock(sources, options, current_block):
-    if options is None or not current_block:
+def __add_tangle_item(source_file, sources, options, item_type, value):
+    if options is None or not value:
         return
 
     for location in options.get("locations", []):
-        location_blocks = sources.get(location, [])
-        location_blocks.append({
-            "block": current_block,
+        absolute_path = __make_absolute(location, source_file)
+        tangle_content = sources.get(absolute_path, [])
+        tangle_content.append({
+            item_type: value,
             "tags": options.get("tags", [])
         })
-        sources[location] = location_blocks
-
-
-def __add_file_to_copy(sources, options, source_file):
-    if options is None:
-        return
-
-    for location in options.get("locations", []):
-        location_blocks = sources.get(location, [])
-        location_blocks.append({
-            "source": source_file,
-            "tags": options.get("tags", [])
-        })
-        sources[location] = location_blocks
+        sources[absolute_path] = tangle_content
 
 
 def get_tangle_sources(filename, separator):
@@ -88,16 +89,17 @@ def get_tangle_sources(filename, separator):
     for line in lines:
         copy_source = __get_copy_source(line, separator)
         if __contains_code_block_separators(line):
-            __add_codeblock(sources, options, current_block)
+            __add_tangle_item(filename, sources, options, "block", current_block)
             current_block = ""
             options = __get_tangle_options(line, separator)
         elif options is not None:
             current_block = current_block + line
         elif copy_source is not None:
             copy_options = __get_tangle_options(line, separator)
-            __add_file_to_copy(sources, copy_options, copy_source)
+            absolute_src = __make_absolute(copy_source, filename)
+            __add_tangle_item(filename, sources, copy_options, "source", absolute_src)
 
-    __add_codeblock(sources, options, current_block)
+    __add_tangle_item(filename, sources, options, "block", current_block)
 
     md_file.close()
     return sources

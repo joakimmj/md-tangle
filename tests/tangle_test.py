@@ -20,7 +20,7 @@ class TangleTest(unittest.TestCase):
             mock_get_args.return_value.force = True
             main()
 
-        output_file = "tests/output/basic/wezterm.lua"
+        output_file = "./tests/output/basic/wezterm.lua"
         self.assertTrue(os.path.exists(output_file))
         self.assertTrue(os.path.exists("tests/output/basic/hello_world1.lua"))
         self.assertTrue(os.path.exists("tests/output/basic/hello_world2.lua"))

@@ -15,8 +15,6 @@ def save_to_file(file_data, verbose=False, force=False):
         if data is None:
             continue
 
-        path = os.path.expanduser(path)
-
         __create_dir(path)
 
         if os.path.isfile(path) and not force:
