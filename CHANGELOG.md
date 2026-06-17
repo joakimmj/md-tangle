@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.1.1] - 2026-06-15
+
+- fix: handle relative paths correctly
+
 ## [2.1.0] - 2026-06-15
 
 - feat: add feature for copying files
@@ -81,7 +85,8 @@ All notable changes to this project will be documented in this file.
 - First version pushed to [PyPI].
 
 
-[Unreleased]: https://github.com/joakimmj/md-tangle/compare/v2.1.0...HEAD
+[Unreleased]: https://github.com/joakimmj/md-tangle/compare/v2.1.1...HEAD
+[2.1.1]: https://github.com/joakimmj/md-tangle/compare/v2.1.0...v2.1.1
 [2.1.0]: https://github.com/joakimmj/md-tangle/compare/v2.0.0...v2.1.0
 [2.0.0]: https://github.com/joakimmj/md-tangle/compare/v1.4.4...v2.0.0
 [1.4.4]: https://github.com/joakimmj/md-tangle/compare/v1.4.3...v1.4.4
