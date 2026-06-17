@@ -122,6 +122,15 @@ $ ls
 helloWorld.js HelloWorld.md styles
 ```
 
+### Copying files
+
+There is also support for copying files. This can be used for e.g. copying some
+assets to your project/dotfiles.
+
+```markdown
+<!-- TANGLE_CP:../assets/background.png tangle:~/.config/wezterm/background.png -->
+```
+
 ## Documentation
 
 The [documentation][8] for `md-tangle` is of course written in Markdown, and tangles to the source
@@ -135,7 +144,7 @@ code.
 [5]: https://en.wikipedia.org/wiki/Markup_language
 [6]: https://en.wikipedia.org/wiki/Literate_programming
 [7]: https://en.wikipedia.org/wiki/Markdown
-[8]: https://github.com/joakimmj/md-tangle/blob/master/DOCS.md
+[8]: https://github.com/joakimmj/md-tangle/blob/main/DOCS.md
 
 [app-badge]: https://img.shields.io/badge/md--tangle-PyPI-orange.svg
 [PyPI-md-tangle]: https://pypi.org/project/md-tangle
