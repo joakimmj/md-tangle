@@ -1,3 +1,4 @@
+import os
 import re
 from io import open
 from pathlib import Path
@@ -14,12 +15,12 @@ def __make_absolute(input_path: str, source_file: str) -> str:
     path = Path(input_path).expanduser()
     base_path = Path(source_file).resolve().parent
 
-    if path.drive and not path.is_absolute():
-        resolved_path = path.resolve()
+    if path.is_absolute() or path.drive:
+        combined = path
     else:
-        resolved_path = (base_path / path).resolve()
+        combined = base_path / path
 
-    return str(resolved_path)
+    return os.path.normpath(str(combined))
 
 
 def __contains_code_block_separators(line):

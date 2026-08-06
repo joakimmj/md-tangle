@@ -73,6 +73,25 @@ class AbsolutePathsTest(unittest.TestCase):
                 self.assertEqual(sources[expected_path][0]["block"], 'print("hello")\n')
                 self.assertEqual(sources[expected_path][0]["tags"], [])
 
+    def test_symlink_target_not_resolved(self):
+        # A tangle target that is a symlink (e.g. a dotfile managed by Home
+        # Manager, symlinked into the nix store) must keep its own path, NOT
+        # be canonicalized to the symlink's target. Regression for targets
+        # like ~/.bashrc becoming /nix/store/<hash>-bashrc.
+        real = self.base_path / "store" / "abc123-bashrc"
+        real.parent.mkdir(parents=True, exist_ok=True)
+        real.write_text("real\n", encoding="utf8")
+
+        link = self.base_path / ".bashrc"
+        link.symlink_to(real)
+
+        md_content = self.create_md_content(str(link))
+        file_path_str = self.create_md_file("symlink", md_content)
+        sources = get_tangle_sources(file_path_str, ",")
+
+        self.assertIn(str(link), sources)
+        self.assertNotIn(str(real), sources)
+
 
 class GetTangleSourcesTest(unittest.TestCase):
     def setUp(self):
