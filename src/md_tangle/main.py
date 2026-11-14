@@ -10,7 +10,13 @@ def __get_args():
     parser = argparse.ArgumentParser(
         description="Tangle code blocks from Markdown file."
     )
-    parser.add_argument("filename", type=str, help="path to Markdown file", nargs="?")
+    parser.add_argument(
+        "filenames",
+        type=str,
+        nargs="*",
+        metavar="filename",
+        help="path to Markdown file (several can be given)",
+    )
     parser.add_argument("--version", action="store_true", help="print version")
     parser.add_argument("-v", "--verbose", action="store_true", help="show output")
     parser.add_argument(
@@ -52,11 +58,11 @@ def main():
         print(metadata.version(__package__))
         sys.exit(0)
 
-    if args.filename is None:
+    if not args.filenames:
         sys.stderr.write("The 'filename' argument is required.\n")
         sys.exit(1)
 
-    tangle_sources = get_tangle_sources(args.filename, args.separator)
+    tangle_sources = get_tangle_sources(args.filenames, args.separator)
 
     tags_to_include = args.include.split(",") if args.include else []
     file_data = transform_file_data(tangle_sources, tags_to_include, args.block_padding)

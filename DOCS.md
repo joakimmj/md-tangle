@@ -37,7 +37,13 @@ def __get_args():
     parser = argparse.ArgumentParser(
         description="Tangle code blocks from Markdown file."
     )
-    parser.add_argument("filename", type=str, help="path to Markdown file", nargs="?")
+    parser.add_argument(
+        "filenames",
+        type=str,
+        nargs="*",
+        metavar="filename",
+        help="path to Markdown file (several can be given)",
+    )
     parser.add_argument("--version", action="store_true", help="print version")
     parser.add_argument("-v", "--verbose", action="store_true", help="show output")
     parser.add_argument(
@@ -81,11 +87,11 @@ def main():
         print(metadata.version(__package__))
         sys.exit(0)
 
-    if args.filename is None:
+    if not args.filenames:
         sys.stderr.write("The 'filename' argument is required.\n")
         sys.exit(1)
 
-    tangle_sources = get_tangle_sources(args.filename, args.separator)
+    tangle_sources = get_tangle_sources(args.filenames, args.separator)
 
     tags_to_include = args.include.split(",") if args.include else []
     file_data = transform_file_data(tangle_sources, tags_to_include, args.block_padding)
@@ -235,7 +241,7 @@ def __add_tangle_item(source_file, sources, options, item_type, value):
 Add code blocks if has `tangle` location and include tags provided when running
 the `md-tangle` command.
 ```python tangle:src/md_tangle/tangle.py
-def get_tangle_sources(filename, separator):
+def __get_file_sources(filename, separator):
     md_file = open(filename, "r", encoding="utf8")
     lines = md_file.readlines()
     options = None
@@ -258,6 +264,22 @@ def get_tangle_sources(filename, separator):
     __add_tangle_item(filename, sources, options, "block", current_block)
 
     md_file.close()
+    return sources
+```
+
+Several Markdown files can be tangled in one run. Their sources are merged into
+one data model, in the order the files are given: when two files tangle to the
+same destination, the blocks of the first file come before those of the next.
+Since everything ends up in one data model, `-d`/`--destination` is applied
+to the destinations of all files together.
+```python tangle:src/md_tangle/tangle.py
+def get_tangle_sources(filenames, separator):
+    sources = {}
+
+    for filename in filenames:
+        for path, items in __get_file_sources(filename, separator).items():
+            sources.setdefault(path, []).extend(items)
+
     return sources
 ```
 

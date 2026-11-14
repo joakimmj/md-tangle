@@ -80,7 +80,7 @@ def __add_tangle_item(source_file, sources, options, item_type, value):
         sources[absolute_path] = tangle_content
 
 
-def get_tangle_sources(filename, separator):
+def __get_file_sources(filename, separator):
     md_file = open(filename, "r", encoding="utf8")
     lines = md_file.readlines()
     options = None
@@ -103,4 +103,14 @@ def get_tangle_sources(filename, separator):
     __add_tangle_item(filename, sources, options, "block", current_block)
 
     md_file.close()
+    return sources
+
+
+def get_tangle_sources(filenames, separator):
+    sources = {}
+
+    for filename in filenames:
+        for path, items in __get_file_sources(filename, separator).items():
+            sources.setdefault(path, []).extend(items)
+
     return sources

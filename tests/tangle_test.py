@@ -16,7 +16,7 @@ class TangleTest(unittest.TestCase):
             mock_get_args.return_value.separator = ","
             mock_get_args.return_value.block_padding = 0
             # active arguments
-            mock_get_args.return_value.filename = "tests/test.md"
+            mock_get_args.return_value.filenames = ["tests/test.md"]
             mock_get_args.return_value.force = True
             main()
 
@@ -49,7 +49,7 @@ class TangleTest(unittest.TestCase):
             mock_get_args.return_value.separator = ","
             mock_get_args.return_value.block_padding = 0
             # active arguments
-            mock_get_args.return_value.filename = "tests/test.md"
+            mock_get_args.return_value.filenames = ["tests/test.md"]
             mock_get_args.return_value.force = True
             mock_get_args.return_value.destination = output_dir
             mock_get_args.return_value.include = "theme"
@@ -84,7 +84,7 @@ class TangleTest(unittest.TestCase):
             mock_get_args.return_value.separator = ","
             mock_get_args.return_value.block_padding = 0
             # active arguments
-            mock_get_args.return_value.filename = "tests/test.md"
+            mock_get_args.return_value.filenames = ["tests/test.md"]
             mock_get_args.return_value.force = True
             mock_get_args.return_value.destination = output_dir
             mock_get_args.return_value.include = "styling,wsl"
@@ -122,7 +122,7 @@ class TangleTest(unittest.TestCase):
             mock_get_args.return_value.include = ""
             mock_get_args.return_value.separator = ","
             # active arguments
-            mock_get_args.return_value.filename = "tests/test_block_padding.md"
+            mock_get_args.return_value.filenames = ["tests/test_block_padding.md"]
             mock_get_args.return_value.force = True
             mock_get_args.return_value.block_padding = 2
             main()

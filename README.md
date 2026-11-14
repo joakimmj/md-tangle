@@ -47,6 +47,18 @@ unless the `-f`/`--force` flag is added.
 By adding the keyword `tags:<tag>` to a tangled code block, it will NOT be included
 in the resulting files if not included with the `-i`/`--include` flag.
 
+### Multiple files
+
+Several Markdown files can be tangled in one run:
+
+```bash
+md-tangle config_core.md config_plugins.md -d dist/
+```
+
+Blocks tangled to the same destination from different files are written in the
+order the files are given, and `-d`/`--destination` is applied to the
+destinations of all files together.
+
 ### Flags
 
 * `-h`/`--help`: Show help message and exit
